@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { str, isValidEmail, isHoneypotTriggered, wantsJson } from "@/lib/validate";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { getCollections } from "@/lib/db/mongodb";
 
 /**
- * Recent-email cache for duplicate-submission protection.
- * In-memory only: resets on redeploy (same limitation as rateLimit).
+ * Subscriptions survive serverless invocations: the email is upserted into
+ * MongoDB with a unique index, so duplicate protection is durable too —
+ * the in-memory cache below is only an extra fast-path for bursts on a
+ * single warm instance.
  */
 const recentEmails = new Map<string, number>();
 const DUPLICATE_WINDOW_MS = 10 * 60 * 1000;
@@ -59,13 +62,25 @@ export async function POST(request: NextRequest) {
   }
   recentEmails.set(email, now);
 
-  // NOTE: console.log is the delivery channel until a mailing-list provider
-  // (e.g. Resend/Mailchimp) is configured — subscriptions are NOT durably
-  // stored. Replace this block when integrating a real provider.
-  console.log("[newsletter]", {
-    email,
-    receivedAt: new Date().toISOString(),
-  });
+  try {
+    const collections = await getCollections();
+    await collections.newsletterSubscribers.updateOne(
+      { email },
+      { $setOnInsert: { email, createdAt: new Date().toISOString() } },
+      { upsert: true }
+    );
+  } catch (error) {
+    console.error("[newsletter] failed to store subscription", error);
+    return NextResponse.json(
+      {
+        error:
+          "We could not subscribe you right now. Please try again shortly.",
+      },
+      { status: 503 }
+    );
+  }
+
+  console.log("[newsletter] stored", { email });
 
   return NextResponse.json(
     { success: true, message: "Subscribed successfully" },

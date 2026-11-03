@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  str,
-  LIMITS,
-  isValidEmail,
-  isHoneypotTriggered,
-  wantsJson,
-} from "@/lib/validate";
+import { str, LIMITS, isValidEmail, isHoneypotTriggered, wantsJson } from "@/lib/validate";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { getCollections } from "@/lib/db/mongodb";
 
 export async function POST(request: NextRequest) {
   if (!wantsJson(request)) {
@@ -52,15 +47,30 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
   }
 
-  // NOTE: console.log is the delivery channel until a real email/DB provider
-  // is configured — messages are NOT durably stored.
-  console.log("[contact]", {
-    name,
-    email,
-    subject,
-    message,
-    receivedAt: new Date().toISOString(),
-  });
+  // Persist durably in MongoDB — messages must survive serverless
+  // executions and be answerable from the database.
+  try {
+    const collections = await getCollections();
+    await collections.messages.insertOne({
+      kind: "contact",
+      name,
+      email,
+      subject,
+      message,
+      createdAt: new Date().toISOString(),
+    } as never);
+  } catch (error) {
+    console.error("[contact] failed to store message", error);
+    return NextResponse.json(
+      {
+        error:
+          "We could not send your message right now. Please try again shortly.",
+      },
+      { status: 503 }
+    );
+  }
+
+  console.log("[contact] stored", { email });
 
   return NextResponse.json(
     { success: true, message: "Message sent successfully" },

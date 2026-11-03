@@ -49,10 +49,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const stored = await insertApplication({
-    ...result.data,
-    submittedAt: new Date().toISOString(),
-  });
+  let stored;
+  try {
+    stored = await insertApplication({
+      ...result.data,
+      submittedAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error("[membership] failed to store application", error);
+    return NextResponse.json(
+      {
+        error:
+          "We could not receive your application right now. Please try again shortly.",
+      },
+      { status: 503 }
+    );
+  }
 
   if (!stored.ok) {
     return NextResponse.json(

@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  str,
-  LIMITS,
-  isValidEmail,
-  isHoneypotTriggered,
-  wantsJson,
-} from "@/lib/validate";
+import { str, LIMITS, isValidEmail, isHoneypotTriggered, wantsJson } from "@/lib/validate";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { getCollections } from "@/lib/db/mongodb";
 
 const VALID_TYPES = ["student", "mentor", "sponsor"];
 
@@ -62,20 +57,34 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid application type." }, { status: 400 });
   }
 
-  // NOTE: console.log is the delivery channel until a real email/DB provider
-  // is configured — submissions are NOT durably stored. Log contains the
-  // submission itself because delivering it is the purpose of this endpoint.
-  console.log("[apply]", {
-    type,
-    name,
-    email,
-    phone,
-    year,
-    expertise,
-    organisation,
-    message,
-    receivedAt: new Date().toISOString(),
-  });
+  // Persist durably in MongoDB — applications must survive serverless
+  // executions and be reviewable from the database.
+  try {
+    const collections = await getCollections();
+    await collections.submissions.insertOne({
+      kind: "apply",
+      type,
+      name,
+      email,
+      phone,
+      year,
+      expertise,
+      organisation,
+      message,
+      createdAt: new Date().toISOString(),
+    } as never);
+  } catch (error) {
+    console.error("[apply] failed to store submission", error);
+    return NextResponse.json(
+      {
+        error:
+          "We could not receive your application right now. Please try again shortly.",
+      },
+      { status: 503 }
+    );
+  }
+
+  console.log("[apply] stored", { type, email, name });
 
   return NextResponse.json(
     { success: true, message: "Application received successfully" },

@@ -63,7 +63,7 @@ export default function ProfileClient() {
   const homeHref = isAdmin ? "/admin" : "/dashboard";
 
   const signOut = () => {
-    signOutEverywhere();
+    void signOutEverywhere();
     router.push("/login");
   };
 

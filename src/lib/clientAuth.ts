@@ -1,10 +1,11 @@
+import { initialsOf } from "@/lib/initials";
+
 /**
- * Client-side demo auth for the main BLIEVE site.
+ * Client session layer for the BLIEVE member/admin auth.
  *
- * Mirrors js/auth.js on the legacy static pages: two account types only
- * (Admin and Member), sessions kept in localStorage. This is a demo login —
- * credentials live in the bundle and nothing is verified server-side.
- * Wire a real backend before handling real credentials.
+ * Sessions are httpOnly cookies verified server-side (see memberAuth.ts +
+ * /api/auth/*). This module is only a thin client store around
+ * GET /api/auth/session so components can render from useSyncExternalStore.
  */
 
 export type Session = {
@@ -16,13 +17,20 @@ export type Session = {
   loginTime: number;
 };
 
-type StoredUser = {
+type ApiUser = {
+  email: string;
   name: string;
-  password: string;
-  role: "admin" | "member";
   title: string;
-  avatar: string;
-  joined?: number;
+};
+
+type SessionApi = {
+  session: {
+    email: string;
+    name: string;
+    role: "admin" | "member";
+    title: string;
+    loginTime: number;
+  } | null;
 };
 
 export type AuthResult =
@@ -31,108 +39,13 @@ export type AuthResult =
 
 export const AUTH_EVENT = "blieve-auth-change";
 
-const SESSION_KEY = "blieve-session";
-const USERS_KEY = "blieve-users";
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const OFFICIAL_USERS: Record<string, StoredUser> = {
-  "admin@blieve.in": {
-    password: "admin2026",
-    name: "Sachin",
-    role: "admin",
-    title: "Administrator",
-    avatar: "S",
-  },
-  "harshitha@blieve.in": {
-    password: "member2026",
-    name: "Harshitha A",
-    role: "member",
-    title: "Member",
-    avatar: "HA",
-  },
-};
-
-function hasWindow(): boolean {
+export function hasWindow(): boolean {
   return typeof window !== "undefined";
 }
 
-function read(key: string): string | null {
-  if (!hasWindow()) return null;
-  try {
-    return window.localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function write(key: string, value: string): void {
-  if (!hasWindow()) return;
-  try {
-    window.localStorage.setItem(key, value);
-  } catch {
-    /* storage unavailable — session just won't persist */
-  }
-}
-
-function remove(key: string): void {
-  if (!hasWindow()) return;
-  try {
-    window.localStorage.removeItem(key);
-  } catch {
-    /* ignore */
-  }
-}
-
-function readUsers(): Record<string, StoredUser> {
-  const raw = read(USERS_KEY);
-  if (!raw) return {};
-  try {
-    const parsed = JSON.parse(raw) as Record<string, StoredUser>;
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
-}
-
-function emitChange(): void {
-  if (!hasWindow()) return;
-  window.dispatchEvent(new Event(AUTH_EVENT));
-}
-
-export function initialsOf(name: string): string {
-  const parts = String(name).trim().split(/\s+/);
-  const a = (parts[0] || "").charAt(0);
-  const b = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
-  return (a + b).toUpperCase() || "M";
-}
-
-function findUser(email: string): StoredUser | null {
-  const key = String(email || "").toLowerCase().trim();
-  if (OFFICIAL_USERS[key]) return OFFICIAL_USERS[key];
-  const stored = readUsers()[key];
-  return stored ?? null;
-}
-
-let cachedRaw: string | null = null;
 let cachedSession: Session | null = null;
-let cacheReady = false;
 
 export function getSession(): Session | null {
-  const raw = read(SESSION_KEY);
-  if (cacheReady && raw === cachedRaw) return cachedSession;
-  cacheReady = true;
-  cachedRaw = raw;
-  if (!raw) {
-    cachedSession = null;
-    return null;
-  }
-  try {
-    const parsed = JSON.parse(raw) as Session;
-    cachedSession =
-      parsed && typeof parsed === "object" && parsed.email ? parsed : null;
-  } catch {
-    cachedSession = null;
-  }
   return cachedSession;
 }
 
@@ -141,103 +54,151 @@ export function getServerSession(): Session | null {
   return null;
 }
 
-/** Subscribe to session changes (login/logout) for useSyncExternalStore. */
 export function subscribeSession(onChange: () => void): () => void {
   if (!hasWindow()) return () => {};
+  // Kick off the initial server round-trip once a reader attaches so the
+  // navbar/authed pages pick up the cookie without a page reload.
+  void refreshSession();
   window.addEventListener(AUTH_EVENT, onChange);
-  window.addEventListener("storage", onChange);
-  return () => {
-    window.removeEventListener(AUTH_EVENT, onChange);
-    window.removeEventListener("storage", onChange);
-  };
+  return () => window.removeEventListener(AUTH_EVENT, onChange);
 }
 
-/** Returns the role for an email without signing in (null if unknown). */
-export function lookupRole(email: string): "admin" | "member" | null {
-  const user = findUser(email);
-  return user ? user.role : null;
-}
-
-export function isLoggedIn(): boolean {
-  return getSession() !== null;
+export function setClientSession(session: Session | null): void {
+  cachedSession = session ? { ...session } : null;
+  emitChange();
 }
 
 export function isAdmin(): boolean {
-  return getSession()?.role === "admin";
+  return cachedSession?.role === "admin";
 }
 
-export function login(email: string, password: string): AuthResult {
-  const key = String(email || "").toLowerCase().trim();
-  const user = findUser(key);
-  if (!user) {
-    return { success: false, error: "No account found with this email." };
-  }
-  if (user.password !== password) {
-    return { success: false, error: "Incorrect password. Please try again." };
-  }
+export function isLoggedIn(): boolean {
+  return cachedSession !== null;
+}
 
-  const session: Session = {
-    email: key,
+function emitChange(): void {
+  if (!hasWindow()) return;
+  window.dispatchEvent(new Event(AUTH_EVENT));
+}
+
+function toSession(
+  user: { email: string; name: string; title: string },
+  role: "admin" | "member" = "member",
+  loginTime = Date.now()
+): Session {
+  return {
+    email: user.email,
     name: user.name,
-    role: user.role,
+    role,
     title: user.title,
-    avatar: user.avatar,
-    loginTime: Date.now(),
+    avatar: initialsOf(user.name),
+    loginTime,
   };
-  write(SESSION_KEY, JSON.stringify(session));
-  emitChange();
+}
+
+export async function refreshSession(): Promise<Session | null> {
+  if (refreshPromise) return refreshPromise;
+  refreshPromise = requestSession().finally(() => {
+    refreshPromise = null;
+  });
+  return refreshPromise;
+}
+
+let refreshPromise: Promise<Session | null> | null = null;
+
+async function requestSession(): Promise<Session | null> {
+  try {
+    const response = await fetch("/api/auth/session", { cache: "no-store" });
+    if (!response.ok) return cachedSession;
+    const data = (await response.json()) as SessionApi;
+    const session = data.session
+      ? toSession(data.session, data.session.role, data.session.loginTime)
+      : null;
+    if (session || cachedSession) setClientSession(session);
+    return session;
+  } catch {
+    return cachedSession;
+  }
+}
+
+export async function login(
+  email: string,
+  password: string
+): Promise<AuthResult> {
+  const response = await safePost("/api/auth/login", { email, password });
+  if (!response.ok) {
+    return {
+      success: false,
+      error:
+        response.error ||
+        "Could not sign in. Please try again in a moment.",
+    };
+  }
+  const session = toSession(response.user);
+  setClientSession(session);
   return { success: true, user: session };
 }
 
-export function register(
+export async function register(
   name: string,
   email: string,
   password: string
-): AuthResult {
-  const key = String(email || "").toLowerCase().trim();
-  const cleanName = String(name || "").trim();
-
-  if (cleanName.length < 2) {
-    return { success: false, error: "Please enter your full name." };
-  }
-  if (!EMAIL_RE.test(key)) {
-    return { success: false, error: "Please enter a valid email address." };
-  }
-  if (password.length < 6) {
-    return { success: false, error: "Password must be at least 6 characters." };
-  }
-  if (findUser(key)) {
+): Promise<AuthResult> {
+  const response = await safePost("/api/auth/register", {
+    name,
+    email,
+    password,
+  });
+  if (!response.ok) {
     return {
       success: false,
-      error: "An account with this email already exists. Try signing in.",
+      error:
+        response.error ||
+        "Could not create the account. Please try again in a moment.",
     };
   }
-
-  const users = readUsers();
-  users[key] = {
-    name: cleanName,
-    password,
-    role: "member",
-    title: "Community Member",
-    avatar: initialsOf(cleanName),
-    joined: Date.now(),
-  };
-  write(USERS_KEY, JSON.stringify(users));
-
-  const session: Session = {
-    email: key,
-    name: cleanName,
-    role: "member",
-    title: "Community Member",
-    avatar: initialsOf(cleanName),
-    loginTime: Date.now(),
-  };
-  write(SESSION_KEY, JSON.stringify(session));
-  emitChange();
+  const session = toSession(response.user);
+  setClientSession(session);
   return { success: true, user: session };
 }
 
-export function logout(): void {
-  remove(SESSION_KEY);
-  emitChange();
+export async function logout(): Promise<void> {
+  try {
+    await fetch("/api/auth/logout", { method: "POST" });
+  } catch {
+    /* session cookie will expire naturally if the request fails */
+  }
+  setClientSession(null);
 }
+
+type PostResponse =
+  | { ok: true; user: ApiUser }
+  | { ok: false; error?: string };
+
+async function safePost(
+  url: string,
+  payload: Record<string, string>
+): Promise<PostResponse> {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    let body: { user?: ApiUser; error?: string } | null = null;
+    try {
+      body = (await response.json()) as { user?: ApiUser; error?: string };
+    } catch {
+      /* non-JSON error */
+    }
+    if (!response.ok) {
+      return { ok: false, error: body?.error };
+    }
+    if (!body?.user) return { ok: false };
+    return { ok: true, user: body.user };
+  } catch {
+    return { ok: false };
+  }
+}
+
+export { initialsOf };

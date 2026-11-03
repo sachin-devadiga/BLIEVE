@@ -294,7 +294,7 @@ export default function AdminClient() {
             <button
               type="button"
               onClick={() => {
-                signOutEverywhere();
+                void signOutEverywhere();
                 setPhase("login");
               }}
               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-white/25 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors"

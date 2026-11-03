@@ -9,7 +9,6 @@ import {
   UserPlus,
   ArrowRight,
   LogOut,
-  ShieldCheck,
   CheckCircle,
   Check,
 } from "lucide-react";
@@ -19,13 +18,11 @@ import {
   getSession,
   getServerSession,
   subscribeSession,
-  lookupRole,
 } from "@/lib/clientAuth";
 import { signOutEverywhere } from "@/lib/signOut";
 import { siteData } from "@/data/siteData";
 
 type Mode = "signin" | "signup";
-type Role = "member" | "admin";
 
 const inputClass =
   "w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all";
@@ -45,7 +42,6 @@ export default function LoginClient() {
     getServerSession
   );
   const [mode, setMode] = useState<Mode>("signin");
-  const [role, setRole] = useState<Role>("member");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -57,40 +53,30 @@ export default function LoginClient() {
   const homeFor = (role: "admin" | "member") =>
     role === "admin" ? "/admin" : "/dashboard";
 
-  const chooseRole = (next: Role) => {
-    setRole(next);
-    setEmail(next === "admin" ? "admin@blieve.in" : "harshitha@blieve.in");
-    setError(null);
-  };
-
-  const handleSignIn = (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!email.trim() || !password) {
       setError("Enter your email and password.");
       return;
     }
-    const actual = lookupRole(email);
-    if (actual && actual !== role) {
-      setError(
-        actual === "admin"
-          ? "That email is an Admin account — switch the option above to Admin."
-          : "That email is a Member account — switch the option above to Member."
-      );
-      return;
-    }
     setLoading(true);
-    const result = login(email, password);
-    setLoading(false);
-    if (!result.success) {
-      setError(result.error);
-      return;
+    try {
+      const result = await login(email, password);
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setDone(`Welcome back, ${result.user.name.split(" ")[0]}.`);
+      setTimeout(() => router.push(homeFor(result.user.role)), 700);
+    } catch {
+      setError("Sign-in failed. Please try again in a moment.");
+    } finally {
+      setLoading(false);
     }
-    setDone(`Welcome back, ${result.user.name.split(" ")[0]}.`);
-    setTimeout(() => router.push(homeFor(result.user.role)), 700);
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     if (!name.trim()) {
@@ -101,8 +87,8 @@ export default function LoginClient() {
       setError("Please enter your email address.");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
       return;
     }
     if (password !== confirm) {
@@ -110,18 +96,23 @@ export default function LoginClient() {
       return;
     }
     setLoading(true);
-    const result = register(name, email, password);
-    setLoading(false);
-    if (!result.success) {
-      setError(result.error);
-      return;
+    try {
+      const result = await register(name, email, password);
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      setDone("Account created — taking you in...");
+      setTimeout(() => router.push("/dashboard"), 700);
+    } catch {
+      setError("Account creation failed. Please try again in a moment.");
+    } finally {
+      setLoading(false);
     }
-    setDone("Account created — taking you in...");
-    setTimeout(() => router.push("/dashboard"), 700);
   };
 
   const signOut = () => {
-    signOutEverywhere();
+    void signOutEverywhere();
     setDone(null);
     setError(null);
     setPassword("");
@@ -287,44 +278,6 @@ export default function LoginClient() {
                   </div>
                 )}
 
-                {mode === "signin" && (
-                  <div className="mb-6">
-                    <span className="block text-xs font-semibold uppercase tracking-wider text-text-light dark:text-white/40 mb-2">
-                      Sign in as
-                    </span>
-                    <div
-                      className="grid grid-cols-2 gap-1 p-1 bg-gray-100 dark:bg-white/5 rounded-xl"
-                      role="group"
-                      aria-label="Account type"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => chooseRole("member")}
-                        aria-pressed={role === "member"}
-                        className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                          role === "member"
-                            ? "bg-orange text-white shadow-sm"
-                            : "text-text-grey dark:text-gray-400 hover:text-navy dark:hover:text-white"
-                        }`}
-                      >
-                        Member
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => chooseRole("admin")}
-                        aria-pressed={role === "admin"}
-                        className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
-                          role === "admin"
-                            ? "bg-orange text-white shadow-sm"
-                            : "text-text-grey dark:text-gray-400 hover:text-navy dark:hover:text-white"
-                        }`}
-                      >
-                        Admin
-                      </button>
-                    </div>
-                  </div>
-                )}
-
                 {mode === "signin" ? (
                   <form onSubmit={handleSignIn} className="space-y-5">
                     <div>
@@ -440,18 +393,16 @@ export default function LoginClient() {
                 )}
 
                 <div className="mt-6 pt-5 border-t border-gray-100 dark:border-white/10">
-                  <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-light dark:text-white/40 mb-2">
-                    <ShieldCheck size={13} aria-hidden="true" />
-                    Demo access
-                  </p>
-                  <p className="font-mono text-[11px] leading-relaxed text-orange break-words">
-                    {role === "admin"
-                      ? "admin@blieve.in / admin2026"
-                      : "harshitha@blieve.in / member2026"}
-                  </p>
-                  <p className="text-xs text-text-light dark:text-white/40 mt-3 leading-relaxed">
-                    Demo login only — sessions are stored in your browser and
-                    passwords are not encrypted. New accounts start as members.
+                  <p className="text-xs text-text-light dark:text-white/40 leading-relaxed">
+                    Administrator accounts use the console at{" "}
+                    <Link
+                      href="/admin"
+                      className="font-semibold text-orange hover:underline"
+                    >
+                      /admin
+                    </Link>
+                    . Every session is verified server-side and protected by an
+                    httpOnly cookie.
                   </p>
                 </div>
               </>

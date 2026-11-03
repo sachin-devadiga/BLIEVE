@@ -1,11 +1,14 @@
 import { randomBytes } from "node:crypto";
-import { readStore, writeStore, withStoreLock } from "./store";
+import { ObjectId, type WithId } from "mongodb";
+import { ensureIndexes, getCollections } from "./mongodb";
 import {
   APPLICATION_STATUSES,
   type ApplicationStatus,
   type ApplicationSummary,
   type MembershipApplication,
 } from "@/lib/membership/options";
+
+type ApplicationDoc = WithId<MembershipApplication>;
 
 function generateId(): string {
   const year = new Date().getFullYear();
@@ -31,90 +34,138 @@ function summarise(app: MembershipApplication): ApplicationSummary {
 
 const IN_FLIGHT: ApplicationStatus[] = ["Pending Review", "Under Review"];
 
+function stripMongo(doc: ApplicationDoc): MembershipApplication {
+  const { _id: _mongoId, ...application } = doc;
+  void _mongoId;
+  return application;
+}
+
 export async function insertApplication(
   input: MembershipApplication
 ): Promise<{ ok: true; id: string } | { ok: false; existingId: string }> {
-  return withStoreLock(async () => {
-    const rows = await readStore<MembershipApplication>();
+  await ensureIndexes();
+  const collections = await getCollections();
 
-    const duplicate = rows.find(
-      (row) =>
-        row.personal.email.toLowerCase() === input.personal.email.toLowerCase() &&
-        row.personal.usn.toUpperCase() === input.personal.usn.toUpperCase() &&
-        IN_FLIGHT.includes(row.status)
-    );
-    if (duplicate) return { ok: false as const, existingId: duplicate.id };
-
-    let application: MembershipApplication = { ...input, id: generateId() };
-    while (rows.some((row) => row.id === application.id)) {
-      application = { ...application, id: generateId() };
-    }
-
-    rows.push(application);
-    await writeStore(rows);
-    return { ok: true as const, id: application.id };
+  const duplicate = await collections.applications.findOne({
+    "personal.email": { $regex: `^${escapeRegex(input.personal.email)}$`, $options: "i" },
+    "personal.usn": { $regex: `^${escapeRegex(input.personal.usn)}$`, $options: "i" },
+    status: { $in: IN_FLIGHT },
   });
+  if (duplicate) return { ok: false as const, existingId: duplicate.id };
+
+  const application: MembershipApplication = { ...input, id: generateId() };
+  try {
+    await collections.applications.insertOne({
+      ...application,
+      _id: newIdPlaceholder(),
+    } as never);
+    return { ok: true as const, id: application.id };
+  } catch (error) {
+    if (isDuplicateKeyId(error)) {
+      // Rare insert collision on the unique `id` index – retry once.
+      const retry: MembershipApplication = {
+        ...application,
+        id: generateId(),
+      };
+      try {
+        await collections.applications.insertOne({ ...retry, _id: newIdPlaceholder() } as never);
+        return { ok: true as const, id: retry.id };
+      } catch (retryError) {
+        if (isDuplicateKeyId(retryError)) {
+          return { ok: false as const, existingId: retry.id };
+        }
+        throw retryError;
+      }
+    }
+    throw error;
+  }
 }
 
 export async function listApplications(options: {
   status?: string;
   query?: string;
 }): Promise<ApplicationSummary[]> {
-  const rows = await readStore<MembershipApplication>();
+  await ensureIndexes();
+  const collections = await getCollections();
+
+  const filter: Record<string, unknown> = {};
   const status = options.status?.trim();
-  const query = options.query?.trim().toLowerCase();
+  if (status && status !== "All") {
+    filter.status = status;
+  }
+  const query = options.query?.trim();
+  if (query) {
+    const rx = new RegExp(escapeRegex(query), "i");
+    filter.$or = [
+      { "personal.fullName": rx },
+      { "personal.usn": rx },
+      { "personal.department": rx },
+      { "personal.email": rx },
+      { "startups.name": rx },
+    ];
+  }
 
-  const filtered = rows.filter((row) => {
-    if (status && status !== "All" && row.status !== status) return false;
-    if (!query) return true;
-    const haystack = [
-      row.personal.fullName,
-      row.personal.usn,
-      row.personal.department,
-      row.personal.email,
-      ...row.startups.map((startup) => startup.name),
-    ]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(query);
-  });
+  const rows = await collections.applications
+    .find(filter)
+    .sort({ submittedAt: -1 })
+    .limit(500)
+    .toArray();
 
-  return filtered
-    .sort((a, b) => b.submittedAt.localeCompare(a.submittedAt))
-    .map(summarise);
+  return rows.map((row) => summarise(stripMongo(row)));
 }
 
 export async function getApplication(
   id: string
 ): Promise<MembershipApplication | null> {
-  const rows = await readStore<MembershipApplication>();
-  return rows.find((row) => row.id === id) ?? null;
+  await ensureIndexes();
+  const collections = await getCollections();
+  const doc = await collections.applications.findOne({ id });
+  return doc ? stripMongo(doc) : null;
 }
 
 export async function updateApplication(
   id: string,
   patch: { status?: ApplicationStatus; reviewNotes?: string }
 ): Promise<MembershipApplication | null> {
-  return withStoreLock(async () => {
-    const rows = await readStore<MembershipApplication>();
-    const index = rows.findIndex((row) => row.id === id);
-    if (index === -1) return null;
+  await ensureIndexes();
+  const collections = await getCollections();
 
-    const current = rows[index];
-    const next: MembershipApplication = {
-      ...current,
-      ...(patch.status ? { status: patch.status } : {}),
-      ...(patch.reviewNotes !== undefined
-        ? { reviewNotes: patch.reviewNotes }
-        : {}),
-    };
-    if (patch.status && patch.status !== current.status) {
-      next.reviewedAt = new Date().toISOString();
-    }
-    rows[index] = next;
-    await writeStore(rows);
-    return next;
-  });
+  const current = await collections.applications.findOne({ id });
+  if (!current) return null;
+
+  const set: Record<string, unknown> = {};
+  if (patch.status && patch.status !== current.status) {
+    set.status = patch.status;
+    set.reviewedAt = new Date().toISOString();
+  }
+  if (patch.reviewNotes !== undefined) {
+    set.reviewNotes = patch.reviewNotes;
+  }
+
+  if (Object.keys(set).length === 0) return stripMongo(current);
+
+  const updated = await collections.applications.findOneAndUpdate(
+    { id },
+    { $set: set },
+    { returnDocument: "after" }
+  );
+  if (!updated) return null;
+  return stripMongo(updated);
+}
+
+export async function listApplicationsByEmail(
+  email: string
+): Promise<MembershipApplication[]> {
+  await ensureIndexes();
+  const collections = await getCollections();
+  const rows = await collections.applications
+    .find({
+      "personal.email": { $regex: `^${escapeRegex(email)}$`, $options: "i" },
+    })
+    .sort({ submittedAt: -1 })
+    .limit(20)
+    .toArray();
+  return rows.map((row) => stripMongo(row));
 }
 
 export function isApplicationStatus(value: unknown): value is ApplicationStatus {
@@ -122,4 +173,22 @@ export function isApplicationStatus(value: unknown): value is ApplicationStatus 
     typeof value === "string" &&
     APPLICATION_STATUSES.includes(value as ApplicationStatus)
   );
+}
+
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function isDuplicateKeyId(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    (error as { code?: number }).code === 11000
+  );
+}
+
+// mongod generates _id server-side when omitted, but the typed collection
+// requires an explicit value — creating it via the driver avoids the require hack.
+function newIdPlaceholder(): ObjectId {
+  return new ObjectId();
 }

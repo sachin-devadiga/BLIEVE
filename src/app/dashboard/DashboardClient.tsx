@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useState, useEffect } from "react";
 import {
   ArrowRight,
   Calendar,
@@ -20,12 +20,43 @@ import {
   getServerSession,
   subscribeSession,
 } from "@/lib/clientAuth";
+import {
+  type ApplicationStatus,
+} from "@/lib/membership/options";
 
-const memberStats = [
-  { value: "9", label: "Portfolios" },
-  { value: "4", label: "Ventures" },
-  { value: "500+", label: "Students" },
-];
+type MyApplication = {
+  id: string;
+  submittedAt: string;
+  status: ApplicationStatus;
+  startupName: string;
+};
+
+const statusClass: Record<ApplicationStatus, string> = {
+  "Pending Review": "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
+  "Under Review": "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200",
+  Approved: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200",
+  Rejected: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
+};
+
+function StatusBadge({ status }: { status: ApplicationStatus }) {
+  return (
+    <span
+      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${statusClass[status]}`}
+    >
+      {status}
+    </span>
+  );
+}
+
+function formatDate(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? value
+    : date.toLocaleString("en-IN", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+}
 
 const memberQuickLinks = [
   { label: "Programs", description: "Incubation tracks and support", href: "/programs", Icon: GraduationCap },
@@ -178,31 +209,107 @@ function MemberHero({
 }
 
 function MemberBody({ email }: { email: string }) {
+  const [applications, setApplications] = useState<MyApplication [] | null>(
+    null
+  );
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const response = await fetch("/api/auth/my-applications", {
+          cache: "no-store",
+        });
+        if (!response.ok) throw new Error("request failed");
+        const data = (await response.json()) as { applications: MyApplication[] };
+        if (!cancelled) {
+          setApplications(data.applications ?? []);
+          setLoadError(null);
+        }
+      } catch {
+        if (!cancelled) {
+          setLoadError("Could not load your applications right now.");
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const latest = applications && applications.length > 0 ? applications[0] : null;
+  const tiles: { value: string; label: string }[] = [
+    { value: "MEMBER", label: "Your role" },
+    {
+      value: applications ? String(applications.length) : "…",
+      label: "Applications submitted",
+    },
+    { value: latest ? latest.status : applications ? "None yet" : "…", label: "Latest status" },
+    {
+      value: latest?.startupName || "—",
+      label: "Latest venture",
+    },
+  ];
+
   return (
     <>
       <AnimatedSection>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-pale dark:bg-[#1A1A2E] rounded-2xl border border-orange/10 p-5 text-center">
-            <p className="font-mono text-2xl font-semibold text-orange">MEMBER</p>
-            <p className="text-xs text-text-light dark:text-white/40 mt-1">
-              Your role
-            </p>
-          </div>
-          {memberStats.map((stat) => (
+          {tiles.map((tile) => (
             <div
-              key={stat.label}
+              key={tile.label}
               className="bg-pale dark:bg-[#1A1A2E] rounded-2xl border border-orange/10 p-5 text-center"
             >
-              <p className="font-mono text-2xl font-semibold text-orange">
-                {stat.value}
+              <p className="font-mono text-lg md:text-2xl font-semibold text-orange break-words">
+                {tile.value}
               </p>
               <p className="text-xs text-text-light dark:text-white/40 mt-1">
-                {stat.label}
+                {tile.label}
               </p>
             </div>
           ))}
         </div>
+        {loadError && (
+          <p className="mt-3 text-sm text-red-600 dark:text-red-300">
+            {loadError}
+          </p>
+        )}
       </AnimatedSection>
+
+      {latest && (
+        <AnimatedSection>
+          <div className="bg-white dark:bg-[#1A1A2E] rounded-2xl border border-orange/10 p-6 md:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 className="font-serif text-xl font-bold text-navy dark:text-white">
+                Your membership applications
+              </h2>
+              <span className="font-mono text-xs text-text-light dark:text-white/40">
+                {applications?.length} total
+              </span>
+            </div>
+            <ul className="divide-y divide-gray-100 dark:divide-white/10">
+              {applications?.map((application) => (
+                <li
+                  key={application.id}
+                  className="flex flex-wrap items-center justify-between gap-3 py-3"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-semibold text-navy dark:text-white text-sm">
+                      {application.startupName || "Membership application"}
+                    </span>
+                    <span className="block font-mono text-xs text-text-light dark:text-white/40">
+                      {application.id} ·{" "}
+                      {formatDate(application.submittedAt)}
+                    </span>
+                  </span>
+                  <StatusBadge status={application.status} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </AnimatedSection>
+      )}
 
       <AnimatedSection>
         <div className="bg-navy dark:bg-[#1A1A2E] rounded-3xl p-8 md:p-10">
