@@ -2,20 +2,20 @@
 
 Monorepo for the BLIEVE E-Cell, ACE website.
 
-| Folder   | What it is | Deployed on | Deploys from |
-|----------|-----------|-------------|--------------|
-| `web/`   | Next.js frontend (pages, UI) | Vercel | `web/` via the Vercel project |
-| `server/`| Express API backend (auth, forms, admin review console — MongoDB Atlas) | Render | this repo (root directory: `server`) |
+| Folder     | What it is | Deployed on | Deploys from |
+|------------|-----------|-------------|--------------|
+| `frontend/`| Next.js frontend (pages, UI) | Vercel | `frontend/` via the Vercel project |
+| `backend/` | Express API backend (auth, forms, admin review console — MongoDB Atlas) | Render | this repo (root directory: `backend`) |
 
 ## Structure
 
 ```
-web/
+frontend/
   src/app/        Next.js pages (app router)
   src/components/ UI components
   src/lib/        client-side helpers (session store, api base)
   next.config.ts  frontend env var: NEXT_PUBLIC_API_URL
-server/
+backend/
   src/index.js    Express app (CORS, cookies, health check)
   src/routes/     auth.js (member auth), admin.js (review console), forms.js (apply/contact/newsletter/membership)
   src/lib/        MongoDB layer, session cookies, validation, rate limiting
@@ -30,25 +30,25 @@ endpoints with an HMAC-signed cookie derived from `ADMIN_PASSWORD`.
 
 ## Environment variables
 
-Frontend (Vercel): `NEXT_PUBLIC_API_URL` (e.g. `https://blieve-api.onrender.com`),
-`NEXT_PUBLIC_SITE_URL`. See `web/.env.example` if present / Vercel settings.
+Frontend (Vercel): `NEXT_PUBLIC_API_URL` (e.g. `https://api.blieve.in`),
+`NEXT_PUBLIC_SITE_URL`. See `frontend/.env.example`.
 
 Backend (Render): `MONGODB_URI`, `SESSION_SECRET`, `ADMIN_PASSWORD`, `ADMIN_NAME`,
-`ADMIN_EMAIL`, `CORS_ORIGINS`. See `server/.env.example`.
+`ADMIN_EMAIL`, `CORS_ORIGINS`. See `backend/.env.example`.
 
 ## Local development
 
 ```bash
 # terminal 1 — backend (http://localhost:4000)
-cd server
+cd backend
 npm install
 copy .env.example .env   # fill in MONGODB_URI + secrets
 npm run dev
 
 # terminal 2 — frontend (http://localhost:3000)
-cd web
+cd frontend
 npm install
-# web/.env.local sets NEXT_PUBLIC_API_URL=http://localhost:4000
+# frontend/.env.local sets NEXT_PUBLIC_API_URL=http://localhost:4000
 npm run dev
 ```
 
