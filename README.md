@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BLIEVE Web
 
-## Getting Started
+Monorepo for the BLIEVE E-Cell, ACE website.
 
-First, run the development server:
+| Folder   | What it is | Deployed on | Deploys from |
+|----------|-----------|-------------|--------------|
+| `web/`   | Next.js frontend (pages, UI) | Vercel | `web/` via the Vercel project |
+| `server/`| Express API backend (auth, forms, admin review console — MongoDB Atlas) | Render | this repo (root directory: `server`) |
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Structure
+
+```
+web/
+  src/app/        Next.js pages (app router)
+  src/components/ UI components
+  src/lib/        client-side helpers (session store, api base)
+  next.config.ts  frontend env var: NEXT_PUBLIC_API_URL
+server/
+  src/index.js    Express app (CORS, cookies, health check)
+  src/routes/     auth.js (member auth), admin.js (review console), forms.js (apply/contact/newsletter/membership)
+  src/lib/        MongoDB layer, session cookies, validation, rate limiting
+  .env.example    backend env vars
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Data
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+All submissions (member signups, membership applications, apply/contact/newsletter
+forms) are stored in **MongoDB Atlas**. The admin console protects the review
+endpoints with an HMAC-signed cookie derived from `ADMIN_PASSWORD`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Environment variables
 
-## Learn More
+Frontend (Vercel): `NEXT_PUBLIC_API_URL` (e.g. `https://blieve-api.onrender.com`),
+`NEXT_PUBLIC_SITE_URL`. See `web/.env.example` if present / Vercel settings.
 
-To learn more about Next.js, take a look at the following resources:
+Backend (Render): `MONGODB_URI`, `SESSION_SECRET`, `ADMIN_PASSWORD`, `ADMIN_NAME`,
+`ADMIN_EMAIL`, `CORS_ORIGINS`. See `server/.env.example`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Local development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+# terminal 1 — backend (http://localhost:4000)
+cd server
+npm install
+copy .env.example .env   # fill in MONGODB_URI + secrets
+npm run dev
 
-## Deploy on Vercel
+# terminal 2 — frontend (http://localhost:3000)
+cd web
+npm install
+# web/.env.local sets NEXT_PUBLIC_API_URL=http://localhost:4000
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Endpoints
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GET /health` — service health
+- `POST /api/auth/register` · `POST /api/auth/login` · `POST /api/auth/logout` · `GET /api/auth/session` · `GET /api/auth/my-applications`
+- `POST /api/apply` · `POST /api/contact` · `POST /api/newsletter` · `POST /api/membership`
+- `POST /api/admin/login` · `POST /api/admin/logout` · `GET /api/admin/applications` · `GET|PATCH /api/admin/applications/:id`
