@@ -1,0 +1,307 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | BLIEVE Members</title>
+  <meta name="description" content="BLIEVE member dashboard — ACET, Bengaluru.">
+  <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body>
+<div class="page-transition"></div>
+<div class="scroll-progress"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="BLIEVE logo" class="logo-img" width="36" height="36"><span>BLIE<span class="text-ember">V</span>E</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="programs.html" class="nav-link">Programs</a>
+      <a href="initiatives.html" class="nav-link">Initiatives</a>
+      <a href="team.html" class="nav-link">Team</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+      <span class="nav-auth"></span>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html" class="nav-link">Home</a>
+  <a href="about.html" class="nav-link">About</a>
+  <a href="programs.html" class="nav-link">Programs</a>
+  <a href="initiatives.html" class="nav-link">Initiatives</a>
+      <a href="team.html" class="nav-link">Team</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="align-self:flex-start"></button>
+  <span class="mobile-auth"></span>
+</div>
+
+<!-- Auth Gate: shown if NOT logged in -->
+<div id="auth-gate" style="display:none;min-height:100vh;display:flex;align-items:center;justify-content:center">
+  <div class="text-center">
+    <h2 class="heading-md">You are not logged in.</h2>
+    <p class="text-dim mt-md">Please sign in to access the dashboard.</p>
+    <a href="login.html" class="btn btn-primary mt-xl">Go to Login</a>
+  </div>
+</div>
+
+<!-- Dashboard: shown if logged in -->
+<div id="dashboard" style="display:none">
+  <!-- Welcome -->
+  <section class="hero" style="min-height:auto;padding-top:calc(var(--nav-height) + var(--space-3xl));padding-bottom:var(--space-2xl)">
+    <div class="container">
+      <div style="display:flex;align-items:center;gap:var(--space-lg)">
+        <div id="user-avatar" style="width:64px;height:64px;border-radius:16px;background:var(--accent-ember);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;font-size:1.5rem;flex-shrink:0"></div>
+        <div>
+          <span class="eyebrow" id="user-role-badge">Member</span>
+          <h1 class="heading-lg" id="user-name">Welcome</h1>
+          <p class="text-dim mt-sm" id="user-title"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Stats -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="grid grid-4">
+        <div class="card text-center">
+          <div class="font-mono text-ember" style="font-size:2rem;font-weight:500" id="stat-role">--</div>
+          <div class="font-mono text-xs text-faint mt-sm">YOUR ROLE</div>
+        </div>
+        <div class="card text-center">
+          <div class="font-mono text-ember" style="font-size:2rem;font-weight:500">9</div>
+          <div class="font-mono text-xs text-faint mt-sm">PORTFOLIOS</div>
+        </div>
+        <div class="card text-center">
+          <div class="font-mono text-ember" style="font-size:2rem;font-weight:500">4</div>
+          <div class="font-mono text-xs text-faint mt-sm">VENTURES</div>
+        </div>
+        <div class="card text-center">
+          <div class="font-mono text-ember" style="font-size:2rem;font-weight:500">500+</div>
+          <div class="font-mono text-xs text-faint mt-sm">STUDENTS</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Role-Specific Sections -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+
+      <!-- President Panel -->
+      <div id="president-panel" style="display:none">
+        <span class="eyebrow">President Panel</span>
+        <h2 class="heading-md mt-md">Admin Controls</h2>
+        <p class="text-dim mt-sm mb-xl">Full access to all BLIEVE operations and member management.</p>
+
+        <div class="grid grid-3">
+          <div class="card card-glow">
+            <h3 class="heading-sm">Member Management</h3>
+            <p class="text-dim text-sm mt-md">View and manage all BLIEVE members, portfolio leads, and access permissions.</p>
+            <div class="mt-lg">
+              <div class="font-mono text-xs text-faint">ACTIVE MEMBERS</div>
+              <div class="font-mono text-ember mt-sm" style="font-size:1.25rem">11</div>
+            </div>
+          </div>
+          <div class="card card-glow">
+            <h3 class="heading-sm">Initiative Oversight</h3>
+            <p class="text-dim text-sm mt-md">Review and approve upcoming challenges, events, and BLIEVE initiatives.</p>
+            <div class="mt-lg">
+              <div class="font-mono text-xs text-faint">PENDING REVIEWS</div>
+              <div class="font-mono text-gold mt-sm" style="font-size:1.25rem">2</div>
+            </div>
+          </div>
+          <div class="card card-glow">
+            <h3 class="heading-sm">Analytics</h3>
+            <p class="text-dim text-sm mt-md">Track participation, engagement, and growth across all portfolios.</p>
+            <div class="mt-lg">
+              <div class="font-mono text-xs text-faint">THIS MONTH</div>
+              <div class="font-mono text-ember mt-sm" style="font-size:1.25rem">+18%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Portfolio Lead Panel -->
+      <div id="lead-panel" style="display:none">
+        <span class="eyebrow">Portfolio Dashboard</span>
+        <h2 class="heading-md mt-md" id="lead-portfolio-name">Your Portfolio</h2>
+        <p class="text-dim mt-sm mb-xl">Manage your portfolio's activities, events, and team.</p>
+
+        <div class="grid grid-2">
+          <div class="card card-glow">
+            <h3 class="heading-sm">Your Tasks</h3>
+            <div class="mt-lg" style="display:flex;flex-direction:column;gap:var(--space-sm)">
+              <div style="display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) 0;border-bottom:1px solid var(--border-hairline)">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-ember);flex-shrink:0"></span>
+                <span class="text-sm text-dim">Review pending applications</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) 0;border-bottom:1px solid var(--border-hairline)">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--accent-gold);flex-shrink:0"></span>
+                <span class="text-sm text-dim">Plan next week's workshop</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) 0;border-bottom:1px solid var(--border-hairline)">
+                <span style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0"></span>
+                <span class="text-sm text-dim">Submit monthly report</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) 0">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--ink-faint);flex-shrink:0"></span>
+                <span class="text-sm text-dim">Update portfolio documentation</span>
+              </div>
+            </div>
+          </div>
+          <div class="card card-glow">
+            <h3 class="heading-sm">Portfolio Info</h3>
+            <div class="mt-lg" style="display:flex;flex-direction:column;gap:var(--space-md)">
+              <div>
+                <div class="font-mono text-xs text-faint">PORTFOLIO</div>
+                <div class="text-sm mt-sm" id="lead-portfolio-full"></div>
+              </div>
+              <div>
+                <div class="font-mono text-xs text-faint">TEAM MEMBERS</div>
+                <div class="text-sm mt-sm" id="lead-team-count">Loading...</div>
+              </div>
+              <div>
+                <div class="font-mono text-xs text-faint">STATUS</div>
+                <div class="mt-sm" style="display:inline-flex;align-items:center;gap:6px">
+                  <span style="width:8px;height:8px;border-radius:50%;background:#22c55e"></span>
+                  <span class="text-sm">Active</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Member Panel -->
+      <div id="member-panel" style="display:none">
+        <span class="eyebrow">Community</span>
+        <h2 class="heading-md mt-md">Welcome to BLIEVE</h2>
+        <p class="text-dim mt-sm mb-xl">You are part of the BLIEVE community at ACET, Bengaluru.</p>
+
+        <div class="grid grid-2">
+          <div class="card card-glow">
+            <h3 class="heading-sm">Get Involved</h3>
+            <p class="text-dim text-sm mt-md">Explore our programs and find ways to contribute to the BLIEVE ecosystem.</p>
+            <div class="mt-lg" style="display:flex;gap:var(--space-sm)">
+              <a href="programs.html" class="btn btn-primary btn-sm">View Programs</a>
+              <a href="contact.html" class="btn btn-ghost btn-sm">Contact Us</a>
+            </div>
+          </div>
+          <div class="card card-glow">
+            <h3 class="heading-sm">Upcoming Events</h3>
+            <div class="mt-lg" style="display:flex;flex-direction:column;gap:var(--space-sm)">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-sm) 0;border-bottom:1px solid var(--border-hairline)">
+                <span class="text-sm">Next Challenge</span>
+                <span class="font-mono text-ember text-xs">Coming Soon</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-sm) 0;border-bottom:1px solid var(--border-hairline)">
+                <span class="text-sm">Workshop</span>
+                <span class="font-mono text-gold text-xs">TBA</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-sm) 0">
+                <span class="text-sm">Networking</span>
+                <span class="font-mono text-faint text-xs">TBA</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Info -->
+      <div class="mt-2xl" style="padding:var(--space-lg);border:1px dashed var(--border-hairline);border-radius:var(--radius-card)">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:var(--space-md)">
+          <div>
+            <div class="font-mono text-xs text-faint">SESSION</div>
+            <div class="text-sm mt-sm" id="session-info">Loading...</div>
+          </div>
+          <button onclick="BLIEVE_AUTH.logout()" class="btn btn-ghost btn-sm">Logout</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<div class="marquee-container">
+  <div class="marquee-track">
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:var(--space-md)"><img src="assets/logo.png" alt="BLIEVE logo" class="logo-img" width="36" height="36"><span>BLIE<span class="text-ember">V</span>E</span></a>
+        <p>Where belief becomes business. The student-run entrepreneurship cell of ACET, Bengaluru.</p>
+        <p class="text-faint text-xs mt-md">Believe &middot; Learn &middot; Innovate &middot; Execute &middot; Venture &middot; Excel<br>Academic Year 2026&ndash;27</p>
+      </div>
+      <div><h4>Site</h4><div class="footer-links"><a href="about.html">About</a><a href="programs.html">Programs</a><a href="initiatives.html">Initiatives</a><a href="team.html">Team</a><a href="contact.html">Contact</a></div></div>
+      <div><h4>Contact</h4><div class="footer-links"><a href="mailto:president@blieve.in">president@blieve.in</a><a href="tel:+919019808476">+91 90198 08476</a><a href="contact.html">Contact Form</a></div></div>
+      <div><h4>Follow</h4><div class="footer-links"><a href="https://instagram.com/blieve_ecell" target="_blank" rel="noopener">@blieve_ecell</a><a href="#">#BLIEVE100</a></div></div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 BLIEVE. All rights reserved.</span>
+      <span class="footer-tagline">Where belief becomes business.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+<script src="js/auth.js"></script>
+<script>
+(function() {
+  var session = BLIEVE_AUTH.getSession();
+  var authGate = document.getElementById('auth-gate');
+  var dashboard = document.getElementById('dashboard');
+
+  if (!session) {
+    authGate.style.display = 'flex';
+    dashboard.style.display = 'none';
+    return;
+  }
+
+  authGate.style.display = 'none';
+  dashboard.style.display = 'block';
+
+  // Populate user info
+  document.getElementById('user-avatar').textContent = session.avatar;
+  document.getElementById('user-name').textContent = 'Welcome, ' + session.name;
+  document.getElementById('user-title').textContent = session.title;
+
+  // Role badge
+  var roleBadge = document.getElementById('user-role-badge');
+  var roleLabel = session.role === 'admin' ? 'ADMIN' : 'MEMBER';
+  roleBadge.textContent = roleLabel;
+
+  // Stat
+  document.getElementById('stat-role').textContent = roleLabel;
+
+  // Show correct panel: Admin gets full controls, everyone else gets the member panel
+  if (session.role === 'admin') {
+    document.getElementById('president-panel').style.display = 'block';
+    document.getElementById('lead-panel').style.display = 'block';
+    document.getElementById('lead-portfolio-name').textContent = 'All Portfolios';
+    document.getElementById('lead-portfolio-full').textContent = 'Full access — all 9 portfolios';
+    document.getElementById('lead-team-count').textContent = '6 portfolio leads + 4 members';
+  } else {
+    document.getElementById('member-panel').style.display = 'block';
+  }
+
+  // Session info
+  var loginDate = new Date(session.loginTime).toLocaleString();
+  document.getElementById('session-info').textContent = 'Logged in as ' + session.email + ' — ' + loginDate;
+})();
+</script>
+</body>
+</html>

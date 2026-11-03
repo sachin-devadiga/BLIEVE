@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | BLIEVE — E-Cell, ACET Bengaluru</title>
+    <meta name="description" content="Sign in or create your BLIEVE member account — the Entrepreneurship Cell of ACET, Bengaluru.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body>
+    <nav class="nav" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/logo.png" alt="BLIEVE logo" class="logo-img" width="36" height="36">
+                <span class="college-name">Aditya College of Engineering and Technology</span>
+                <span class="blieve-name">BLIEVE <span class="text-ember">E</span>Cell</span>
+                <span>BLI</span><span class="text-ember">E</span><span>VE</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="programs.html" class="nav-link">Programs</a>
+                <a href="initiatives.html" class="nav-link">Initiatives</a>
+                <a href="team.html" class="nav-link">Team</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9681;</button>
+            <span class="nav-auth"></span>
+            <a href="contact.html" class="btn btn-primary btn-sm nav-cta">Join Us</a>
+            <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+        </div>
+    </nav>
+    <div class="mobile-menu">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="programs.html" class="nav-link">Programs</a>
+        <a href="initiatives.html" class="nav-link">Initiatives</a>
+        <a href="team.html" class="nav-link">Team</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="align-self:flex-start"></button>
+        <span class="mobile-auth"></span>
+        <a href="contact.html" class="btn btn-primary">Join Us</a>
+    </div>
+
+    <div class="auth-wrap">
+        <!-- Brand panel -->
+        <aside class="auth-brand">
+            <div class="auth-brand-logo">
+                <img src="assets/logo.png" alt="BLIEVE logo">
+                <span>BLI<span class="text-ember">E</span>VE</span>
+            </div>
+            <div class="auth-brand-mid">
+                <h2>Where belief<br>becomes <span class="text-ember">business.</span></h2>
+                <p>Your BLIEVE account connects you to a structured path from idea to venture &mdash; mentorship, programmes, initiatives, and a peer community of builders at ACET, Bengaluru.</p>
+            </div>
+            <div class="auth-brand-foot">E-Cell BLIEVE &middot; ACET Bengaluru &middot; AY 2026&ndash;27</div>
+        </aside>
+
+        <!-- Form panel -->
+        <main class="auth-panel">
+            <div class="auth-card">
+                <a href="index.html" class="auth-back">&larr; Back to site</a>
+
+                <div class="auth-tabs" role="tablist" aria-label="Authentication">
+                    <button class="auth-tab active" id="tab-signin" role="tab" aria-selected="true" aria-controls="pane-signin">Sign In</button>
+                    <button class="auth-tab" id="tab-signup" role="tab" aria-selected="false" aria-controls="pane-signup">Sign Up</button>
+                </div>
+
+                <div class="auth-alert" id="auth-alert" role="alert"></div>
+
+                <!-- SIGN IN -->
+                <div class="auth-pane active" id="pane-signin" role="tabpanel" aria-labelledby="tab-signin">
+                    <h1 class="auth-title">Welcome back</h1>
+                    <p class="auth-sub">Sign in to access your BLIEVE dashboard.</p>
+
+                    <form id="form-signin" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="si-email">Email</label>
+                            <input type="email" id="si-email" class="form-input" placeholder="you@blieve.in" autocomplete="email" required>
+                            <div class="field-error" id="si-email-err">Please enter a valid email.</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="si-password">Password</label>
+                            <div class="pw-field">
+                                <input type="password" id="si-password" class="form-input" placeholder="Your password" autocomplete="current-password" required style="padding-right:64px">
+                                <button type="button" class="pw-toggle" data-target="si-password" aria-label="Show password">SHOW</button>
+                            </div>
+                            <div class="field-error" id="si-password-err">Password is required.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full form-submit" id="si-btn" style="width:100%">Sign In</button>
+                    </form>
+
+                    <details class="auth-demo">
+                        <summary>Demo access</summary>
+                        <div class="auth-demo-row"><span class="k">Admin</span><span class="v">admin@blieve.in / admin2026</span></div>
+                        <div class="auth-demo-row"><span class="k">Member</span><span class="v">harshitha@blieve.in / member2026</span></div>
+                        <div class="auth-demo-row"><span class="k">Or sign up</span><span class="v">New accounts start as members</span></div>
+                    </details>
+                </div>
+
+                <!-- SIGN UP -->
+                <div class="auth-pane" id="pane-signup" role="tabpanel" aria-labelledby="tab-signup">
+                    <h1 class="auth-title">Create your account</h1>
+                    <p class="auth-sub">Join the BLIEVE community. New accounts start as community members.</p>
+
+                    <form id="form-signup" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="su-name">Full name</label>
+                            <input type="text" id="su-name" class="form-input" placeholder="Your name" autocomplete="name" required>
+                            <div class="field-error" id="su-name-err">Please enter your name.</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="su-email">Email</label>
+                            <input type="email" id="su-email" class="form-input" placeholder="you@college.edu" autocomplete="email" required>
+                            <div class="field-error" id="su-email-err">Please enter a valid email.</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="su-password">Password</label>
+                            <div class="pw-field">
+                                <input type="password" id="su-password" class="form-input" placeholder="At least 6 characters" autocomplete="new-password" required style="padding-right:64px">
+                                <button type="button" class="pw-toggle" data-target="su-password" aria-label="Show password">SHOW</button>
+                            </div>
+                            <div class="field-error" id="su-password-err">Use at least 6 characters.</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="su-confirm">Confirm password</label>
+                            <div class="pw-field">
+                                <input type="password" id="su-confirm" class="form-input" placeholder="Repeat your password" autocomplete="new-password" required style="padding-right:64px">
+                                <button type="button" class="pw-toggle" data-target="su-confirm" aria-label="Show password">SHOW</button>
+                            </div>
+                            <div class="field-error" id="su-confirm-err">Passwords do not match.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary form-submit" id="su-btn" style="width:100%">Create Account</button>
+                    </form>
+                </div>
+
+                <div class="auth-foot">
+                    Official team accounts are issued by the BLIEVE Admin.<br>
+                    Questions? <a href="mailto:admin@blieve.in">admin@blieve.in</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/script.js" defer></script>
+    <script src="js/auth.js"></script>
+    <script>
+    (function() {
+        var alertBox = document.getElementById('auth-alert');
+        var tabIn = document.getElementById('tab-signin');
+        var tabUp = document.getElementById('tab-signup');
+        var paneIn = document.getElementById('pane-signin');
+        var paneUp = document.getElementById('pane-signup');
+
+        if (BLIEVE_AUTH.isLoggedIn()) {
+            window.location.href = 'members.html';
+            return;
+        }
+
+        function showAlert(msg, ok) {
+            alertBox.textContent = msg;
+            alertBox.className = 'auth-alert show' + (ok ? ' ok' : '');
+        }
+        function hideAlert() { alertBox.className = 'auth-alert'; }
+        function setErr(id, on) {
+            var el = document.getElementById(id);
+            if (el) el.className = 'field-error' + (on ? ' show' : '');
+        }
+        function emailOk(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+        // Tabs
+        function showTab(which) {
+            var isIn = which === 'in';
+            tabIn.classList.toggle('active', isIn);
+            tabUp.classList.toggle('active', !isIn);
+            tabIn.setAttribute('aria-selected', isIn);
+            tabUp.setAttribute('aria-selected', !isIn);
+            paneIn.classList.toggle('active', isIn);
+            paneUp.classList.toggle('active', !isIn);
+            hideAlert();
+        }
+        tabIn.addEventListener('click', function() { showTab('in'); });
+        tabUp.addEventListener('click', function() { showTab('up'); });
+        if (window.location.hash === '#signup') showTab('up');
+
+        // Password visibility toggles
+        document.querySelectorAll('.pw-toggle').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var input = document.getElementById(btn.getAttribute('data-target'));
+                var showing = input.type === 'text';
+                input.type = showing ? 'password' : 'text';
+                btn.textContent = showing ? 'SHOW' : 'HIDE';
+            });
+        });
+
+        // Sign In
+        document.getElementById('form-signin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideAlert();
+            var email = document.getElementById('si-email').value.trim();
+            var pw = document.getElementById('si-password').value;
+            var bad = false;
+            setErr('si-email-err', !emailOk(email)); bad = bad || !emailOk(email);
+            setErr('si-password-err', !pw); bad = bad || !pw;
+            if (bad) return;
+
+            var btn = document.getElementById('si-btn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+            setTimeout(function() {
+                var r = BLIEVE_AUTH.login(email, pw);
+                if (r.success) {
+                    showAlert('Welcome back, ' + r.user.name.split(' ')[0] + '. Redirecting...', true);
+                    btn.textContent = 'Signed In';
+                    setTimeout(function() { window.location.href = 'members.html'; }, 500);
+                } else {
+                    showAlert(r.error, false);
+                    btn.disabled = false;
+                    btn.textContent = 'Sign In';
+                }
+            }, 500);
+        });
+
+        // Sign Up
+        document.getElementById('form-signup').addEventListener('submit', function(e) {
+            e.preventDefault();
+            hideAlert();
+            var name = document.getElementById('su-name').value.trim();
+            var email = document.getElementById('su-email').value.trim();
+            var pw = document.getElementById('su-password').value;
+            var cf = document.getElementById('su-confirm').value;
+            var bad = false;
+            setErr('su-name-err', name.length < 2); bad = bad || name.length < 2;
+            setErr('su-email-err', !emailOk(email)); bad = bad || !emailOk(email);
+            setErr('su-password-err', pw.length < 6); bad = bad || pw.length < 6;
+            setErr('su-confirm-err', pw !== cf); bad = bad || pw !== cf;
+            if (bad) return;
+
+            var btn = document.getElementById('su-btn');
+            btn.disabled = true;
+            btn.textContent = 'Creating account...';
+            setTimeout(function() {
+                var r = BLIEVE_AUTH.register(name, email, pw);
+                if (r.success) {
+                    showAlert('Account created. Welcome to BLIEVE, ' + r.user.name.split(' ')[0] + '.', true);
+                    btn.textContent = 'Account Created';
+                    setTimeout(function() { window.location.href = 'members.html'; }, 700);
+                } else {
+                    showAlert(r.error, false);
+                    btn.disabled = false;
+                    btn.textContent = 'Create Account';
+                }
+            }, 600);
+        });
+    })();
+    </script>
+</body>
+</html>

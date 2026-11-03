@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team | BLIEVE</title>
+  <meta name="description" content="Meet the BLIEVE team â€” students building the entrepreneurship ecosystem at ACET, Bengaluru.">
+  <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+</head>
+<body>
+
+<div class="page-transition"></div>
+<div class="scroll-progress"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo"><img src="assets/logo.png" alt="BLIEVE logo" class="logo-img" width="36" height="36"><span>BLIE<span class="text-ember">V</span>E</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="programs.html" class="nav-link">Programs</a>
+      <a href="initiatives.html" class="nav-link">Initiatives</a>
+      <a href="team.html" class="nav-link">Team</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+      <span class="nav-auth"></span>
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme"></button>
+      <a href="contact.html" class="btn btn-primary btn-sm nav-cta">Join Us</a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html" class="nav-link">Home</a>
+  <a href="about.html" class="nav-link">About</a>
+  <a href="programs.html" class="nav-link">Programs</a>
+  <a href="initiatives.html" class="nav-link">Initiatives</a>
+  <a href="team.html" class="nav-link">Team</a>
+  <a href="contact.html" class="nav-link">Contact</a>
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" style="align-self:flex-start"></button>
+  <a href="contact.html" class="btn btn-primary">Join Us</a>
+  <span class="mobile-auth"></span>
+</div>
+
+<!-- Hero -->
+<section class="hero" style="min-height:auto;padding-top:calc(var(--nav-height) + var(--space-4xl));padding-bottom:var(--space-4xl)">
+  <div class="container">
+    <span class="eyebrow reveal">Team</span>
+    <h1 class="heading-lg reveal reveal-delay-1">The people behind BLIEVE.</h1>
+    <p class="hero-subtitle reveal reveal-delay-2" style="max-width:640px">
+      A student-run team of nine portfolios, building the entrepreneurship ecosystem at ACET, Bengaluru &mdash; one event, one startup, one idea at a time.
+    </p>
+  </div>
+</section>
+
+<!-- Leadership -->
+<section class="section">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <span class="eyebrow">Team Leader</span>
+        <h2 class="heading-sm mt-lg">Sachin</h2>
+      </div>
+      <div class="card reveal reveal-delay-1">
+        <span class="eyebrow">Faculty Advisor</span>
+        <h2 class="heading-sm mt-lg">Prof. Prakash M</h2>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Patronage Note -->
+<section class="section" style="padding-top:0">
+  <div class="container text-center">
+    <p class="text-faint text-sm reveal" style="max-width:560px;margin:0 auto">BLIEVE operates under the patronage of the Principal, Dr. M. S. Ganesha Prasad, ACET.</p>
+  </div>
+</section>
+
+<!-- Full Team -->
+<section class="section">
+  <div class="container">
+    <span class="eyebrow reveal">Full Team</span>
+    <h2 class="heading-md reveal">Portfolio Leads</h2>
+    <div class="grid grid-3 mt-2xl">
+      <div class="portfolio-card reveal">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">01</div>
+          <div class="portfolio-name">Programs &amp; Curriculum</div>
+          <div class="portfolio-desc">Designs workshops, bootcamps, and skill tracks that build real-world capabilities.</div>
+          <div class="portfolio-lead"><strong>Sushritha S H</strong> (Lead) &middot; Disha R</div>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-delay-1">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">02</div>
+          <div class="portfolio-name">Mentorship &amp; Incubation</div>
+          <div class="portfolio-desc">Pairs founders with mentors and runs incubation support for early-stage ventures.</div>
+
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-delay-2">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">03</div>
+          <div class="portfolio-name">Corporate &amp; Industry Relations</div>
+          <div class="portfolio-desc">Builds bridges to companies, investors, and industry mentors.</div>
+          <div class="portfolio-lead"><strong>Jayvardhan B</strong></div>
+        </div>
+      </div>
+      <div class="portfolio-card reveal">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">04</div>
+          <div class="portfolio-name">Design &amp; Creatives</div>
+          <div class="portfolio-desc">Owns visual identity, posters, and pitch decks across all BLIEVE outputs.</div>
+          <div class="portfolio-lead"><strong>Deekshith J R</strong> (Lead) &middot; Shaeshadri V</div>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-delay-1">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">05</div>
+          <div class="portfolio-name">Content &amp; Public Relations</div>
+          <div class="portfolio-desc">Writes and tells the BLIEVE story across channels and media.</div>
+
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-delay-2">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">06</div>
+          <div class="portfolio-name">Web &amp; Tech</div>
+          <div class="portfolio-desc">Builds and maintains the digital presence of BLIEVE.</div>
+          <div class="portfolio-lead"><strong>Ujwal M</strong></div>
+        </div>
+      </div>
+      <div class="portfolio-card reveal">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">07</div>
+          <div class="portfolio-name">Social Media &amp; Marketing</div>
+          <div class="portfolio-desc">Runs feeds, campaigns, and builds community buzz.</div>
+
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-delay-1">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">08</div>
+          <div class="portfolio-name">Logistics &amp; Operations</div>
+          <div class="portfolio-desc">Keeps events, rooms, and resources running on time.</div>
+          <div class="portfolio-lead"><strong>Pranav N</strong></div>
+        </div>
+      </div>
+      <div class="portfolio-card reveal reveal-delay-2">
+        <div class="card-inner card-glow">
+          <div class="portfolio-number">09</div>
+          <div class="portfolio-name">Finance &amp; Sponsorship Ops</div>
+          <div class="portfolio-desc">Manages budgets and brings in sponsors.</div>
+          <div class="portfolio-lead"><strong>Vishvas</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-lg">
+  <div class="container text-center">
+    <h2 class="heading-md reveal">Want to join a portfolio?</h2>
+    <p class="text-dim mt-lg reveal reveal-delay-1" style="max-width:560px;margin-left:auto;margin-right:auto">We are always looking for driven students to join a portfolio and help build the BLIEVE ecosystem.</p>
+    <div class="mt-xl reveal reveal-delay-2">
+      <a href="contact.html" class="btn btn-primary">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-container">
+  <div class="marquee-track">
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+    <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo" style="margin-bottom:var(--space-md)"><img src="assets/logo.png" alt="BLIEVE logo" class="logo-img" width="36" height="36"><span>BLIE<span class="text-ember">V</span>E</span></a>
+        <p>Where belief becomes business. The student-run Entrepreneurship Cell of ACET, Bengaluru.</p>
+        <p class="text-faint text-xs mt-md">Believe &middot; Learn &middot; Innovate &middot; Execute &middot; Venture &middot; Excel<br>Academic Year 2026&ndash;27</p>
+      </div>
+      <div><h4>Site</h4><div class="footer-links"><a href="about.html">About</a><a href="programs.html">Programs</a><a href="initiatives.html">Initiatives</a><a href="team.html">Team</a><a href="contact.html">Contact</a></div></div>
+      <div><h4>Contact</h4><div class="footer-links"><a href="mailto:president@blieve.in">president@blieve.in</a><a href="tel:+919019808476">+91 90198 08476</a><a href="contact.html">Contact Form</a></div></div>
+      <div><h4>Follow</h4><div class="footer-links"><a href="https://instagram.com/blieve_ecell" target="_blank" rel="noopener">@blieve_ecell</a><a href="#">#BLIEVE100</a></div></div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 BLIEVE. All rights reserved.</span>
+      <span class="footer-tagline">Where belief becomes business.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Legacy static HTML site + its Node server (not part of the Next.js app):
+    "server.js",
+    "js/**",
+    "css/**",
+    "assets/**",
+    "*.html",
   ]),
 ]);
 

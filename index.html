@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLIEVE — Where Belief Becomes Business | E-Cell, ACET Bengaluru</title>
+    <meta name="description" content="BLIEVE is the Entrepreneurship Cell of Aditya College of Engineering and Technology (ACET), Bengaluru — a student-led ecosystem that turns belief into ventures through mentorship, incubation and hands-on programmes.">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/png" href="assets/logo.png">
+</head>
+<body>
+    <div class="scroll-progress"></div>
+
+    <!-- Navigation -->
+    <nav class="sticky-nav" aria-label="Main navigation">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo" aria-label="BLIEVE home">
+                <img src="assets/logo.png" alt="BLIEVE logo" class="logo-img" width="36" height="36">
+                <span class="college-name">Aditya College of Engineering and Technology</span>
+                <span class="blieve-name">BLIEVE <span class="text-ember">E</span>Cell</span>
+                <span>BLI</span><span class="text-ember">E</span><span>VE</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="about.html" class="nav-link">About</a>
+                <a href="programs.html" class="nav-link">Programs</a>
+                <a href="initiatives.html" class="nav-link">Initiatives</a>
+                <a href="team.html" class="nav-link">Team</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark and light theme">&#9681;</button>
+            <span class="nav-auth"></span>
+            <a href="contact.html" class="btn btn-primary btn-sm nav-cta">Join Us</a>
+            <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="index.html" class="mobile-link active">Home</a>
+        <a href="about.html" class="mobile-link">About</a>
+        <a href="programs.html" class="mobile-link">Programs</a>
+        <a href="initiatives.html" class="mobile-link">Initiatives</a>
+        <a href="team.html" class="mobile-link">Team</a>
+        <a href="contact.html" class="mobile-link">Contact</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9681;</button>
+        <span class="mobile-auth"></span>
+        <a href="contact.html" class="btn btn-primary">Join Us</a>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="eyebrow reveal visible">E-Cell BLIEVE &middot; ACET, Bengaluru &middot; AY 2026&ndash;27</span>
+                <h1 class="heading-xl">
+                    <span class="hero-word" style="display:inline-block">Where </span>
+                    <span class="hero-word text-ember" style="display:inline-block">belief </span>
+                    <span class="hero-word" style="display:inline-block">becomes </span>
+                    <span class="hero-word" style="display:inline-block">business.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    BLIEVE is the student-run Entrepreneurship Cell of ACET &mdash; an ecosystem where
+                    belief moves through learning, innovation and execution to become real ventures,
+                    real jobs and real impact.
+                </p>
+                <div class="hero-ctas">
+                    <a href="about.html" class="btn btn-ghost">Explore BLIEVE</a>
+                    <a href="contact.html" class="btn btn-primary">Join Us</a>
+                </div>
+            </div>
+
+            <!-- Signature: Spark to Growth Line -->
+            <div class="spark-svg-wrap" aria-hidden="true">
+                <svg viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A spark tracing into an ascending growth line, from belief to impact">
+                    <path class="spark-path" d="M 20 95 Q 60 94, 100 88 T 180 76 T 260 62 T 340 48 T 420 38 T 500 30 T 580 24 T 660 18 T 740 13 T 820 10 L 880 8" />
+                    <circle class="spark-dot" cx="20" cy="95" r="4" />
+                    <circle cx="340" cy="48" r="3" fill="var(--accent-gold)" opacity="0.85" />
+                    <circle cx="600" cy="21" r="3" fill="var(--accent-gold)" opacity="0.85" />
+                    <circle cx="880" cy="8" r="4" style="fill:var(--accent-ember);filter:drop-shadow(0 0 8px rgba(255,106,56,0.6))" />
+                    <text x="20" y="125" class="spark-stage">BELIEF</text>
+                    <text x="315" y="125" class="spark-stage">EXECUTION</text>
+                    <text x="575" y="125" class="spark-stage">VENTURE</text>
+                    <text x="880" y="125" text-anchor="end" class="spark-stage spark-stage-final">IMPACT</text>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Long-Term Goals stat strip -->
+    <!-- Official source contains separate Vision and Long-Term Goals figures.
+         Do not merge without approval. Vision targets are stated on about.html. -->
+    <section class="section" aria-labelledby="goals-heading">
+        <div class="container">
+            <span class="eyebrow" id="goals-heading">Long-Term Goals</span>
+            <h2 class="sr-only" style="position:absolute;left:-9999px">Long-term goals</h2>
+            <div class="stat-strip reveal">
+                <div class="stat-item">
+                    <div class="stat-number" data-target="100" data-suffix="">0</div>
+                    <div class="stat-label">Startups Incubated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" data-target="10000" data-suffix="">0</div>
+                    <div class="stat-label">Direct &amp; Indirect Jobs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-inner" style="display:flex;align-items:baseline;justify-content:center;gap:2px">
+                        <span class="stat-number" style="margin-bottom:0">&#8377;</span><span class="stat-number" data-target="100" data-suffix="" style="margin-bottom:0">0</span><span class="stat-number" style="margin-bottom:0">&nbsp;Cr</span>
+                    </div>
+                    <div class="stat-label">Cumulative Enterprise Value</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-text">Self-Sustaining<br>Incubation Space</div>
+                    <div class="stat-label">Built by the Ecosystem</div>
+                </div>
+            </div>
+            <p class="text-faint text-xs mt-md font-mono" style="letter-spacing:0.04em">
+                Vision targets by 2035: 25 startups &middot; 1000 employment opportunities &middot; &#8377;10 crore enterprise value &mdash; full statement on the About page.
+            </p>
+        </div>
+    </section>
+
+    <!-- What we do -->
+    <section class="section" aria-labelledby="pillars-heading">
+        <div class="container">
+            <span class="eyebrow reveal">What we do</span>
+            <h2 class="heading-lg reveal" id="pillars-heading">Three pillars of<br>the BLIEVE ecosystem</h2>
+            <div class="grid grid-3 mt-2xl">
+                <a href="programs.html" class="portfolio-card reveal reveal-delay-1">
+                    <div class="card-inner card-glow">
+                        <div class="portfolio-number">01</div>
+                        <h3 class="portfolio-name">Mentorship &amp; Incubation</h3>
+                        <p class="portfolio-desc">Pairing founders with experienced mentors and providing the space, structure and support to build real companies.</p>
+                        <div class="portfolio-lead">Mentored by the BLIEVE team</div>
+                    </div>
+                </a>
+                <a href="programs.html" class="portfolio-card reveal reveal-delay-2">
+                    <div class="card-inner card-glow">
+                        <div class="portfolio-number">02</div>
+                        <h3 class="portfolio-name">Programs &amp; Curriculum</h3>
+                        <p class="portfolio-desc">Workshops, bootcamps and skill tracks designed to take ideas from napkin sketches to market-ready ventures.</p>
+                        <div class="portfolio-lead">Led by <strong>Sushritha S H</strong></div>
+                    </div>
+                </a>
+                <a href="programs.html" class="portfolio-card reveal reveal-delay-3">
+                    <div class="card-inner card-glow">
+                        <div class="portfolio-number">03</div>
+                        <h3 class="portfolio-name">Corporate &amp; Industry Relations</h3>
+                        <p class="portfolio-desc">Building bridges to companies, investors and industry mentors who open doors for campus ventures.</p>
+                        <div class="portfolio-lead">Led by <strong>Jayvardhan B</strong></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLIEVE Journey (official acronym) -->
+    <section class="section" aria-labelledby="journey-heading">
+        <div class="container">
+            <span class="eyebrow reveal">The BLIEVE Journey</span>
+            <h2 class="heading-lg reveal" id="journey-heading">Six letters.<br>One founder path.</h2>
+            <div class="journey-grid mt-2xl">
+                <div class="letter-card reveal">
+                    <div class="letter-glyph">B</div>
+                    <h3 class="letter-title">Believe</h3>
+                    <p class="letter-desc">The entry point where students can voice an unfinished idea.</p>
+                </div>
+                <div class="letter-card reveal reveal-delay-1">
+                    <div class="letter-glyph">L</div>
+                    <h3 class="letter-title">Learn</h3>
+                    <p class="letter-desc">Structured exposure to customer discovery, business models, unit economics and storytelling.</p>
+                </div>
+                <div class="letter-card reveal reveal-delay-2">
+                    <div class="letter-glyph">I</div>
+                    <h3 class="letter-title">Innovate</h3>
+                    <p class="letter-desc">Differentiate an idea and create genuine new value.</p>
+                </div>
+                <div class="letter-card reveal">
+                    <div class="letter-glyph">E</div>
+                    <h3 class="letter-title">Execute</h3>
+                    <p class="letter-desc">Turn the validated idea into a working prototype or MVP.</p>
+                </div>
+                <div class="letter-card reveal reveal-delay-1">
+                    <div class="letter-glyph">V</div>
+                    <h3 class="letter-title">Venture</h3>
+                    <p class="letter-desc">Formalise the idea into an actual business and acquire first customers.</p>
+                </div>
+                <div class="letter-card reveal reveal-delay-2">
+                    <div class="letter-glyph">E</div>
+                    <h3 class="letter-title">Excel</h3>
+                    <p class="letter-desc">Scale what works through growth strategy and fundraising readiness.</p>
+                </div>
+            </div>
+            <p class="journey-note reveal">An iterative path &mdash; teams move back and forth as they learn.</p>
+        </div>
+    </section>
+
+    <!-- Brand Philosophy -->
+    <section class="philosophy-band" aria-labelledby="philosophy-heading">
+        <div class="container">
+            <span class="eyebrow reveal" id="philosophy-heading" style="display:block;text-align:center">Brand Philosophy</span>
+            <div class="philosophy-words reveal" role="list">
+                <span class="p-word" role="listitem">Dream</span>
+                <span class="philosophy-dot" aria-hidden="true"></span>
+                <span class="p-word" role="listitem">Believe</span>
+                <span class="philosophy-dot" aria-hidden="true"></span>
+                <span class="p-word" role="listitem">Build</span>
+                <span class="philosophy-dot" aria-hidden="true"></span>
+                <span class="p-word" role="listitem">Lead</span>
+                <span class="philosophy-dot" aria-hidden="true"></span>
+                <span class="p-word text-ember" role="listitem">Impact</span>
+            </div>
+            <p class="philosophy-caption reveal reveal-delay-1">
+                BLIEVE is a journey from belief through learning, innovation, execution, venture
+                creation and excellence &mdash; carried by the people bold enough to begin.
+            </p>
+        </div>
+    </section>
+
+    <!-- Flagship callout -->
+    <section class="section">
+        <div class="container">
+            <div class="callout reveal">
+                <div class="callout-text">
+                    <span class="eyebrow">Flagship Initiative</span>
+                    <h3 class="heading-md">BLIEVE Poster Challenge</h3>
+                    <p class="text-dim mt-md">Design. Create. Inspire. Our first open challenge &mdash; results are in on the Initiatives page.</p>
+                </div>
+                <a href="initiatives.html" class="btn btn-primary">View Initiatives</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing CTA -->
+    <section class="section-lg">
+        <div class="container text-center">
+            <h2 class="heading-lg reveal">Have an idea worth believing in?</h2>
+            <p class="text-dim mt-lg reveal reveal-delay-1">Bring it to BLIEVE. We will help you build it.</p>
+            <div class="mt-xl reveal reveal-delay-2">
+                <a href="contact.html" class="btn btn-primary">Join Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marquee -->
+    <div class="marquee-container" aria-hidden="true">
+        <div class="marquee-track">
+            <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+            <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+            <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+            <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+            <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+            <span class="marquee-item">#BLIEVE100 <span class="dot"></span> DESIGN. CREATE. INSPIRE.</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="nav-logo" style="margin-bottom:var(--space-md)">
+                        <img src="assets/logo.png" alt="BLIEVE logo" class="logo-img" width="36" height="36">
+                        <span>BLI<span class="text-ember">E</span>VE</span>
+                    </a>
+                    <p>Where belief becomes business. The student-run Entrepreneurship Cell of Aditya College of Engineering and Technology, Bengaluru.</p>
+                    <p class="text-faint text-xs mt-md">Believe &middot; Learn &middot; Innovate &middot; Execute &middot; Venture &middot; Excel<br>Academic Year 2026&ndash;27</p>
+                </div>
+                <div>
+                    <h4>Site</h4>
+                    <div class="footer-links">
+                        <a href="about.html">About</a>
+                        <a href="programs.html">Programs</a>
+                        <a href="initiatives.html">Initiatives</a>
+                        <a href="team.html">Team</a>
+                        <a href="contact.html">Contact</a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Contact</h4>
+                    <div class="footer-links">
+                        <a href="mailto:president@blieve.in">president@blieve.in</a>
+                        <a href="tel:+919019808476">+91 90198 08476</a>
+                        <a href="login.html">Sign In</a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Follow</h4>
+                    <div class="footer-links">
+                        <a href="https://instagram.com/blieve_ecell" target="_blank" rel="noopener">@blieve_ecell</a>
+                        <a href="#">#BLIEVE100</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 BLIEVE &mdash; E-Cell, ACET Bengaluru. All rights reserved.</p>
+                <p class="footer-tagline">Where belief becomes business.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/animations.js" defer></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
