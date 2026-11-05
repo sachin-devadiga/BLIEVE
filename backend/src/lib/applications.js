@@ -167,9 +167,13 @@ export async function updateApplication(id, patch) {
 export async function listApplicationsByEmail(email) {
   await ensureIndexes();
   const collections = await applicationsCollection();
+  const pattern = `^${escapeRegex(String(email || "").trim())}$`;
   const rows = await collections
     .find({
-      "personal.email": { $regex: `^${escapeRegex(email)}$`, $options: "i" },
+      $or: [
+        { "personal.email": { $regex: pattern, $options: "i" } },
+        { memberEmail: { $regex: pattern, $options: "i" } },
+      ],
     })
     .sort({ submittedAt: -1 })
     .limit(20)

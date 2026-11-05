@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   AlertCircle,
   ArrowLeft,
@@ -23,6 +23,11 @@ import {
   type StartupEntry,
 } from "@/lib/membership/options";
 import { apiUrl } from "@/lib/api";
+import {
+  getSession,
+  getServerSession,
+  subscribeSession,
+} from "@/lib/clientAuth";
 
 const DRAFT_KEY = "blieve-membership-draft-v1";
 
@@ -380,6 +385,11 @@ export default function MembershipForm() {
   const [referenceId, setReferenceId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const restoredRef = useRef(false);
+  const session = useSyncExternalStore(
+    subscribeSession,
+    getSession,
+    getServerSession
+  );
 
   useEffect(() => {
     if (restoredRef.current) return;
@@ -391,6 +401,19 @@ export default function MembershipForm() {
       setStep(draft.step);
     }
   }, []);
+
+  useEffect(() => {
+    if (session?.role !== "member" || !session.email) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- prefill from the signed-in session, an external system
+    setForm((previous) =>
+      previous.personal.email.trim()
+        ? previous
+        : {
+            ...previous,
+            personal: { ...previous.personal, email: session.email },
+          }
+    );
+  }, [session]);
 
   useEffect(() => {
     if (!restoredRef.current) return;

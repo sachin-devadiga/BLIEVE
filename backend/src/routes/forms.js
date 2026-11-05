@@ -11,6 +11,10 @@ import {
 import { clientIp, rateLimit } from "../lib/rateLimit.js";
 import { validateMembership } from "../lib/membershipValidate.js";
 import { insertApplication } from "../lib/applications.js";
+import {
+  MEMBER_SESSION_COOKIE,
+  readMemberPayload,
+} from "../lib/sessions.js";
 
 const router = Router();
 
@@ -207,8 +211,13 @@ router.post("/membership", async (req, res) => {
   }
 
   try {
+    const member = readMemberPayload(
+      req.cookies?.[MEMBER_SESSION_COOKIE]
+    );
     const stored = await insertApplication({
       ...result.data,
+      meeting: null,
+      memberEmail: member ? member.email.toLowerCase() : "",
       submittedAt: new Date().toISOString(),
     });
 
