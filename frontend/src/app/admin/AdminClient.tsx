@@ -56,6 +56,15 @@ function formatDate(value: string): string {
       });
 }
 
+function toDatetimeLocalValue(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 function DetailRow({ label, value }: { label: string; value: string }) {
   if (!value) return null;
   return (
@@ -114,6 +123,9 @@ export default function AdminClient() {
     "Pending Review"
   );
   const [patchNotes, setPatchNotes] = useState("");
+  const [meetingAt, setMeetingAt] = useState("");
+  const [meetingLink, setMeetingLink] = useState("");
+  const [meetingNotes, setMeetingNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -200,6 +212,13 @@ export default function AdminClient() {
         setSelected(data.application);
         setPatchStatus(data.application.status);
         setPatchNotes(data.application.reviewNotes);
+        setMeetingAt(
+          data.application.meeting?.at
+            ? toDatetimeLocalValue(data.application.meeting.at)
+            : ""
+        );
+        setMeetingLink(data.application.meeting?.link ?? "");
+        setMeetingNotes(data.application.meeting?.notes ?? "");
       }
     } catch {
       setSaveError("Could not load that application.");
@@ -220,6 +239,10 @@ export default function AdminClient() {
         body: JSON.stringify({
           status: patchStatus,
           reviewNotes: patchNotes,
+          meeting:
+            meetingAt.trim().length > 0
+              ? { at: meetingAt, link: meetingLink, notes: meetingNotes }
+              : null,
         }),
       });
       const data = (await response.json().catch(() => ({}))) as {
@@ -632,6 +655,76 @@ export default function AdminClient() {
                         className={`${inputClass} resize-none`}
                         placeholder="Visible to administrators only..."
                       />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 border-t border-gray-100 dark:border-white/10 pt-6">
+                    <h3 className="font-serif text-base font-bold text-navy dark:text-white mb-1.5">
+                      Meeting with the E-Cell team
+                    </h3>
+                    <p className="text-xs text-text-light dark:text-white/40 mb-4">
+                      Shown on the member dashboard once this application is
+                      Approved. Leave the date empty to clear the meeting.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                      <div>
+                        <label
+                          htmlFor="meeting-at"
+                          className="block text-sm font-medium text-navy dark:text-white mb-1.5"
+                        >
+                          Date &amp; time
+                        </label>
+                        <input
+                          id="meeting-at"
+                          type="datetime-local"
+                          value={meetingAt}
+                          onChange={(event) =>
+                            setMeetingAt(event.target.value)
+                          }
+                          disabled={saving}
+                          className={inputClass}
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="meeting-link"
+                          className="block text-sm font-medium text-navy dark:text-white mb-1.5"
+                        >
+                          Venue or online link
+                        </label>
+                        <input
+                          id="meeting-link"
+                          type="text"
+                          value={meetingLink}
+                          onChange={(event) =>
+                            setMeetingLink(event.target.value)
+                          }
+                          maxLength={300}
+                          disabled={saving}
+                          className={inputClass}
+                          placeholder="E-Cell room 208 or https://meet.google.com/..."
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label
+                          htmlFor="meeting-notes"
+                          className="block text-sm font-medium text-navy dark:text-white mb-1.5"
+                        >
+                          Message for the member
+                        </label>
+                        <textarea
+                          id="meeting-notes"
+                          value={meetingNotes}
+                          onChange={(event) =>
+                            setMeetingNotes(event.target.value)
+                          }
+                          rows={3}
+                          maxLength={1000}
+                          disabled={saving}
+                          className={`${inputClass} resize-none`}
+                          placeholder="What to prepare, whom to meet, agenda..."
+                        />
+                      </div>
                     </div>
                   </div>
 

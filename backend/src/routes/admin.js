@@ -137,7 +137,26 @@ router.patch("/admin/applications/:id", async (req, res) => {
   if (body.reviewNotes !== undefined) {
     patch.reviewNotes = str(body.reviewNotes, 2000);
   }
-  if (patch.status === undefined && patch.reviewNotes === undefined) {
+  if (body.meeting !== undefined) {
+    if (body.meeting === null) {
+      patch.meeting = null;
+    } else if (typeof body.meeting === "object" && body.meeting !== null) {
+      const at = str(body.meeting.at, 40);
+      if (!at || Number.isNaN(Date.parse(at))) {
+        return res.status(400).json({ error: "Invalid meeting date or time." });
+      }
+      patch.meeting = {
+        at: new Date(at).toISOString(),
+        link: str(body.meeting.link, 300),
+        notes: str(body.meeting.notes, 1000),
+      };
+    }
+  }
+  if (
+    patch.status === undefined &&
+    patch.reviewNotes === undefined &&
+    patch.meeting === undefined
+  ) {
     return res.status(400).json({ error: "Nothing to update." });
   }
 

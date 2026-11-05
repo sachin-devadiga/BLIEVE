@@ -23,6 +23,7 @@ import {
 import { apiUrl } from "@/lib/api";
 import {
   type ApplicationStatus,
+  type ApplicationMeeting,
 } from "@/lib/membership/options";
 
 type MyApplication = {
@@ -30,6 +31,7 @@ type MyApplication = {
   submittedAt: string;
   status: ApplicationStatus;
   startupName: string;
+  meeting: ApplicationMeeting | null;
 };
 
 const statusClass: Record<ApplicationStatus, string> = {
@@ -57,6 +59,47 @@ function formatDate(value: string): string {
         dateStyle: "medium",
         timeStyle: "short",
       });
+}
+
+function ApprovedMeetingCard({ application }: { application: MyApplication }) {
+  const meeting = application.meeting;
+  return (
+    <AnimatedSection>
+      <div className="bg-gradient-to-br from-orange to-orange-light dark:from-orange dark:to-orange/70 rounded-3xl p-6 md:p-10 text-white shadow-lg shadow-orange/20">
+        <p className="font-medium text-sm mb-3 tracking-wider uppercase text-white/80 flex items-center gap-2">
+          <Calendar size={16} aria-hidden="true" />
+          Next step — Meet the E-Cell team
+        </p>
+        {meeting ? (
+          <>
+            <h2 className="font-serif text-2xl md:text-3xl font-bold mb-4">
+              {formatDate(meeting.at)}
+            </h2>
+            {meeting.link && (
+              <p className="mb-2">
+                <span className="font-semibold">Venue / Online:</span>{" "}
+                <span className="break-words">{meeting.link}</span>
+              </p>
+            )}
+            {meeting.notes && (
+              <p className="text-white/90 leading-relaxed whitespace-pre-wrap max-w-2xl">
+                {meeting.notes}
+              </p>
+            )}
+            <p className="mt-4 text-sm text-white/70">
+              Bring your startup questions and any material you would like to
+              discuss. See you there!
+            </p>
+          </>
+        ) : (
+          <h2 className="font-serif text-xl md:text-2xl font-bold">
+            Your application was approved! The E-Cell team will contact you
+            shortly to schedule your meeting.
+          </h2>
+        )}
+      </div>
+    </AnimatedSection>
+  );
 }
 
 const memberQuickLinks = [
@@ -279,6 +322,10 @@ function MemberBody({ email }: { email: string }) {
         )}
       </AnimatedSection>
 
+      {latest?.status === "Approved" && (
+        <ApprovedMeetingCard application={latest} />
+      )}
+
       {latest && (
         <AnimatedSection>
           <div className="bg-white dark:bg-[#1A1A2E] rounded-2xl border border-orange/10 p-6 md:p-8">
@@ -304,6 +351,15 @@ function MemberBody({ email }: { email: string }) {
                       {application.id} ·{" "}
                       {formatDate(application.submittedAt)}
                     </span>
+                    {application.status === "Approved" &&
+                      application.meeting && (
+                        <span className="block text-xs text-orange mt-1 font-medium">
+                          Meeting: {formatDate(application.meeting.at)}
+                          {application.meeting.link
+                            ? ` · ${application.meeting.link}`
+                            : ""}
+                        </span>
+                      )}
                   </span>
                   <StatusBadge status={application.status} />
                 </li>

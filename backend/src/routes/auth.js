@@ -136,6 +136,7 @@ router.get("/auth/my-applications", async (req, res) => {
         submittedAt: application.submittedAt,
         status: application.status,
         startupName: application.startups?.[0]?.name ?? "",
+        meeting: application.meeting ?? null,
       })),
     });
   } catch (error) {

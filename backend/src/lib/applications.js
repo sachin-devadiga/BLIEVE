@@ -40,6 +40,14 @@ function stripMongo(doc) {
   return application;
 }
 
+function hasMeaningfulMeeting(meeting) {
+  return Boolean(
+    meeting &&
+      typeof meeting.at === "string" &&
+      meeting.at.trim().length > 0
+  );
+}
+
 function applicationsCollection() {
   return getDb().then((db) => db.collection("applications"));
 }
@@ -124,12 +132,25 @@ export async function updateApplication(id, patch) {
   if (!current) return null;
 
   const set = {};
-  if (patch.status && patch.status !== current.status) {
-    set.status = patch.status;
-    set.reviewedAt = new Date().toISOString();
+  if (patch.status) {
+    if (patch.status !== current.status) {
+      set.status = patch.status;
+      set.reviewedAt = new Date().toISOString();
+    }
   }
   if (patch.reviewNotes !== undefined) {
     set.reviewNotes = patch.reviewNotes;
+  }
+  if (patch.meeting !== undefined) {
+    if (patch.meeting === null || !hasMeaningfulMeeting(patch.meeting)) {
+      set.meeting = null;
+    } else {
+      set.meeting = {
+        at: patch.meeting.at,
+        link: patch.meeting.link ?? "",
+        notes: patch.meeting.notes ?? "",
+      };
+    }
   }
 
   if (Object.keys(set).length === 0) return stripMongo(current);

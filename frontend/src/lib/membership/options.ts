@@ -104,12 +104,19 @@ export type MembershipPayload = {
   declarationAccepted: boolean;
 };
 
+export type ApplicationMeeting = {
+  at: string;
+  link: string;
+  notes: string;
+};
+
 export type MembershipApplication = MembershipPayload & {
   id: string;
   submittedAt: string;
   status: ApplicationStatus;
   reviewNotes: string;
   reviewedAt: string | null;
+  meeting: ApplicationMeeting | null;
 };
 
 export type ApplicationSummary = {
