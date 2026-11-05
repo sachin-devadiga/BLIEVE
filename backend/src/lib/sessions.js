@@ -125,18 +125,19 @@ export function adminPasswordMatches(input) {
 /* ------------------------------ cookies ----------------------------- */
 
 export function cookieOptions(req, maxAge) {
-  // trust proxy is enabled in index.js so req.secure respects X-Forwarded-Proto
+  // trust proxy is enabled in index.js so req.secure respects X-Forwarded-Proto.
+  // res.cookie() maxAge is in milliseconds; callers pass seconds, so convert.
   return {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
-    maxAge,
+    maxAge: maxAge * 1000,
     secure: Boolean(req.secure),
   };
 }
 
 export function clearCookieOptions(req) {
-  return cookieOptions(req, 0);
+  return { ...cookieOptions(req, 0), maxAge: 0, expires: new Date(0) };
 }
 
 export function isAdmin(req) {
