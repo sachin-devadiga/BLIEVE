@@ -12,6 +12,7 @@ import {
   ADMIN_SESSION_COOKIE,
 } from "../lib/sessions.js";
 import { listApplicationsByEmail } from "../lib/applications.js";
+import { ensureIndexes } from "../lib/mongodb.js";
 import { clientIp, rateLimit } from "../lib/rateLimit.js";
 import { config } from "../config.js";
 
