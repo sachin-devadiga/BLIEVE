@@ -159,7 +159,7 @@ export default function Navbar() {
                 />
             </span>
             <span className="min-w-0 leading-tight">
-              <span className={`block font-bold uppercase ${brandNameClass} text-[11px] sm:text-xs lg:text-[13px] xl:text-[15px] 2xl:text-[17px] tracking-wide max-w-[88px] sm:max-w-[130px] lg:max-w-[150px] xl:max-w-[180px] 2xl:max-w-[230px]`}>
+              <span className={`block font-bold uppercase ${brandNameClass} text-[9px] leading-[1.2] sm:leading-tight sm:text-xs lg:text-[13px] xl:text-[15px] 2xl:text-[17px] tracking-wide max-w-[72px] sm:max-w-[130px] lg:max-w-[150px] xl:max-w-[180px] 2xl:max-w-[230px]`}>
                 {INSTITUTION}
               </span>
               <span className="hidden sm:block text-[9px] lg:text-[10px] xl:text-[11px] font-semibold uppercase tracking-[0.2em] text-orange mt-0.5 lg:mt-1">
@@ -310,11 +310,11 @@ export default function Navbar() {
                   priority
                 />
               </span>
-              <span className="hidden xl:block leading-tight">
-                <span className={`block font-bold uppercase ${brandNameClass} text-[13px] xl:text-[15px] 2xl:text-[17px] tracking-wide`}>
+              <span className="block leading-tight">
+                <span className={`block font-bold uppercase ${brandNameClass} text-[10px] sm:text-[13px] xl:text-[15px] 2xl:text-[17px] tracking-wide`}>
                   BLI<span className="text-orange">E</span>VE
                 </span>
-                <span className="block text-[9px] xl:text-[10px] 2xl:text-[11px] font-semibold uppercase tracking-[0.2em] text-orange mt-0.5 lg:mt-1">
+                <span className="hidden sm:block text-[9px] xl:text-[10px] 2xl:text-[11px] font-semibold uppercase tracking-[0.2em] text-orange mt-0.5 lg:mt-1">
                   E-Cell &middot; {INSTITUTION_SHORT}
                 </span>
               </span>
