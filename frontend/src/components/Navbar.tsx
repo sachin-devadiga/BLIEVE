@@ -321,7 +321,11 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2.5 text-navy dark:text-white rounded-lg hover:bg-navy/5 dark:hover:bg-white/10 transition-colors"
+              className={`lg:hidden p-2.5 rounded-lg transition-colors ${
+                solid
+                  ? "text-navy dark:text-white hover:bg-navy/5 dark:hover:bg-white/10"
+                  : "text-white hover:bg-white/10"
+              }`}
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
