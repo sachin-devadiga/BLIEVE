@@ -61,25 +61,27 @@ export default function HeroVideo() {
 
   return (
     <>
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover"
-        autoPlay
-        muted={muted}
-        loop
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-        tabIndex={-1}
-      >
-        <source src="/hero-video.mp4" type="video/mp4" />
-      </video>
+      <div className="relative w-full aspect-video lg:absolute lg:inset-0 lg:aspect-auto lg:h-full">
+        <video
+          ref={videoRef}
+          className="absolute inset-0 w-full h-full object-contain lg:object-cover"
+          autoPlay
+          muted={muted}
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
 
-      {/* Readability overlay so white text stays legible over the footage */}
-      <div
-        className="absolute inset-0 bg-navy/55 dark:bg-[#080F24]/70 pointer-events-none"
-        aria-hidden="true"
-      />
+        {/* Readability overlay so white text stays legible over the footage */}
+        <div
+          className="absolute inset-0 bg-navy/55 dark:bg-[#080F24]/70 pointer-events-none"
+          aria-hidden="true"
+        />
+      </div>
 
       <button
         type="button"
