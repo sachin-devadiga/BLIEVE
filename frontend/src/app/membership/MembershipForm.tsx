@@ -44,7 +44,7 @@ const USN_RE = /^[A-Za-z0-9]{4,20}$/;
 const MAX_STARTUPS = 5;
 
 const inputClass =
-  "w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all disabled:opacity-60";
+  "w-full px-4 py-3 min-h-11 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all disabled:opacity-60";
 
 type FormState = {
   website: string;
@@ -694,7 +694,7 @@ export default function MembershipForm() {
                     disabled={index > step}
                     aria-current={state === "current" ? "step" : undefined}
                     aria-label={`Step ${index + 1}: ${label}`}
-                    className={`flex items-center gap-2 min-w-0 ${
+                    className={`flex items-center gap-2 min-w-0 min-h-11 ${
                       index < step ? "cursor-pointer" : "cursor-default"
                     }`}
                   >

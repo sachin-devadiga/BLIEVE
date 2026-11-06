@@ -150,7 +150,7 @@ export default function ApplyClient() {
                   </span>
                   <Link
                     href="/membership"
-                    className="font-semibold text-orange hover:underline"
+                    className="font-semibold text-orange hover:underline max-sm:inline-flex max-sm:items-center max-sm:min-h-11"
                   >
                     Apply for startup membership instead
                   </Link>

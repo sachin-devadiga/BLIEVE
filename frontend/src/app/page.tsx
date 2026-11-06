@@ -123,7 +123,7 @@ export default function HomePage() {
               </h2>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 text-orange font-semibold text-sm hover:gap-3 transition-all"
+                className="inline-flex items-center gap-2 min-h-11 text-orange font-semibold text-sm hover:gap-3 transition-all"
               >
                 Read our story <ArrowRight size={16} aria-hidden="true" />
               </Link>
@@ -223,7 +223,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/programs"
-                className="text-orange font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all shrink-0"
+                className="text-orange font-semibold text-sm inline-flex items-center gap-1 min-h-11 hover:gap-2 transition-all shrink-0"
               >
                 All {siteData.programs.length} programmes{" "}
                 <ArrowRight size={16} aria-hidden="true" />
@@ -374,7 +374,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/events"
-                className="text-orange font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all shrink-0"
+                className="text-orange font-semibold text-sm inline-flex items-center gap-1 min-h-11 hover:gap-2 transition-all shrink-0"
               >
                 All events <ArrowRight size={16} aria-hidden="true" />
               </Link>
@@ -398,7 +398,7 @@ export default function HomePage() {
                   </p>
                   <Link
                     href="/blog/recap-blieve-poster-challenge-2026"
-                    className="mt-5 text-orange text-sm font-semibold hover:underline"
+                    className="mt-5 inline-flex items-center min-h-11 text-orange text-sm font-semibold hover:underline"
                   >
                     Read the recap &rarr;
                   </Link>
@@ -421,7 +421,7 @@ export default function HomePage() {
                     href={siteData.contact.instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-5 text-orange text-sm font-semibold hover:underline"
+                    className="mt-5 inline-flex items-center min-h-11 text-orange text-sm font-semibold hover:underline"
                   >
                     Follow {siteData.contact.instagramHandle} for the
                     announcement &rarr;
@@ -501,7 +501,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/blog"
-                className="text-orange font-semibold text-sm flex items-center gap-1 hover:gap-2 transition-all shrink-0"
+                className="text-orange font-semibold text-sm inline-flex items-center gap-1 min-h-11 hover:gap-2 transition-all shrink-0"
               >
                 All articles <ArrowRight size={16} aria-hidden="true" />
               </Link>

@@ -69,7 +69,7 @@ export default function EventCard({ event }: { event: Event }) {
           href={siteData.contact.instagramUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 w-full py-2.5 bg-orange text-white text-sm font-semibold rounded-lg hover:bg-orange-light transition-colors"
+          className="inline-flex items-center justify-center gap-2 w-full py-2.5 min-h-11 bg-orange text-white text-sm font-semibold rounded-lg hover:bg-orange-light transition-colors"
         >
           <Camera size={16} aria-hidden="true" />
           Follow {siteData.contact.instagramHandle} for the announcement
@@ -79,7 +79,7 @@ export default function EventCard({ event }: { event: Event }) {
           href={siteData.contact.instagramUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 w-full py-2.5 border border-orange/40 text-orange text-sm font-semibold rounded-lg hover:bg-orange/10 transition-colors"
+          className="inline-flex items-center justify-center gap-2 w-full py-2.5 min-h-11 border border-orange/40 text-orange text-sm font-semibold rounded-lg hover:bg-orange/10 transition-colors"
         >
           <Camera size={16} aria-hidden="true" />
           Details on {siteData.contact.instagramHandle}

@@ -132,7 +132,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`site-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         solid
           ? "bg-white/95 dark:bg-[#080F24]/95 backdrop-blur-md shadow-lg shadow-black/5 border-b border-black/5 dark:border-white/10"
           : "bg-transparent"
@@ -290,7 +290,7 @@ export default function Navbar() {
             )}
             <Link
               href="/apply"
-              className="hidden sm:inline-flex items-center px-3 lg:px-3.5 py-2.5 bg-orange text-white font-semibold text-[13px] rounded-xl hover:bg-orange-light transition-colors shadow-lg shadow-orange/20"
+              className="hidden sm:inline-flex items-center px-3 lg:px-3.5 py-2.5 min-h-11 bg-orange text-white font-semibold text-[13px] rounded-xl hover:bg-orange-light transition-colors shadow-lg shadow-orange/20"
             >
               Apply to BLIEVE
             </Link>
@@ -321,12 +321,12 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 text-navy dark:text-white rounded-lg hover:bg-navy/5 dark:hover:bg-white/10 transition-colors"
+              className="lg:hidden p-2.5 text-navy dark:text-white rounded-lg hover:bg-navy/5 dark:hover:bg-white/10 transition-colors"
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
             >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
@@ -343,7 +343,7 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="lg:hidden overflow-hidden"
           >
-            <div className="bg-white dark:bg-navy-dark border-t border-gray-100 dark:border-white/10 px-4 pb-6 pt-2 max-h-[calc(100vh-4rem)] overflow-y-auto">
+            <div className="bg-white dark:bg-navy-dark border-t border-gray-100 dark:border-white/10 px-4 pb-[calc(1.5rem_+_env(safe-area-inset-bottom))] pt-2 max-h-[calc(100dvh_-_4rem_-_env(safe-area-inset-top))] overflow-y-auto">
               <p className="px-4 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-text-light dark:text-white/40">
                 Explore
               </p>

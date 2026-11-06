@@ -107,7 +107,7 @@ export default function ContactClient() {
                       </h3>
                       <a
                         href={`mailto:${siteData.contact.email}`}
-                        className="text-text-grey dark:text-gray-400 text-sm hover:text-orange transition-colors"
+                        className="text-text-grey dark:text-gray-400 text-sm hover:text-orange transition-colors inline-flex items-center min-h-11"
                       >
                         {siteData.contact.email}
                       </a>
@@ -123,7 +123,7 @@ export default function ContactClient() {
                       </h3>
                       <a
                         href={`tel:${siteData.contact.phoneHref}`}
-                        className="text-text-grey dark:text-gray-400 text-sm hover:text-orange transition-colors"
+                        className="text-text-grey dark:text-gray-400 text-sm hover:text-orange transition-colors inline-flex items-center min-h-11"
                       >
                         {siteData.contact.phone}
                       </a>
@@ -140,7 +140,7 @@ export default function ContactClient() {
                       href={siteData.contact.instagramUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 h-10 bg-orange/10 dark:bg-orange/20 rounded-xl text-orange hover:bg-orange hover:text-white transition-colors text-sm font-medium"
+                      className="inline-flex items-center gap-2 px-4 min-h-11 bg-orange/10 dark:bg-orange/20 rounded-xl text-orange hover:bg-orange hover:text-white transition-colors text-sm font-medium"
                       aria-label="BLIEVE on Instagram"
                     >
                       <Camera size={16} />
@@ -198,7 +198,7 @@ export default function ContactClient() {
                           required
                           maxLength={100}
                           autoComplete="name"
-                          className="w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all"
+                          className="w-full px-4 py-3 min-h-11 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all"
                           placeholder="Your name"
                         />
                       </div>
@@ -218,7 +218,7 @@ export default function ContactClient() {
                           required
                           maxLength={254}
                           autoComplete="email"
-                          className="w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all"
+                          className="w-full px-4 py-3 min-h-11 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all"
                           placeholder="you@email.com"
                         />
                       </div>
@@ -236,7 +236,7 @@ export default function ContactClient() {
                         value={formData.subject}
                         onChange={handleChange}
                         required
-                        className="w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all"
+                        className="w-full px-4 py-3 min-h-11 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all"
                       >
                         <option value="">Select a subject</option>
                         <option value="general">General Inquiry</option>
@@ -263,7 +263,7 @@ export default function ContactClient() {
                         required
                         rows={5}
                         maxLength={4000}
-                        className="w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all resize-none"
+                        className="w-full px-4 py-3 min-h-11 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all resize-none"
                         placeholder="Tell us what's on your mind..."
                       />
                     </div>
@@ -334,7 +334,7 @@ export default function ContactClient() {
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(siteData.contact.mapQuery)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-orange text-sm font-medium hover:underline"
+                  className="inline-flex items-center min-h-11 text-orange text-sm font-medium hover:underline"
                 >
                   Open in Google Maps
                 </a>

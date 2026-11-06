@@ -15,14 +15,14 @@ export default function ThemeToggle({ onDark = false }: { onDark?: boolean }) {
     () => false
   );
 
-  if (!mounted) return <div className="w-10 h-10" />;
+  if (!mounted) return <div className="w-11 h-11" />;
 
   const isDark = theme === "dark";
 
   return (
     <motion.button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+      className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition-colors ${
         onDark
           ? "bg-white/10 hover:bg-white/20"
           : "bg-navy/5 dark:bg-white/10 hover:bg-navy/10 dark:hover:bg-white/20"

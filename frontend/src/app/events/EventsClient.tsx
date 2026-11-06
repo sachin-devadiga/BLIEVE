@@ -147,7 +147,7 @@ export default function EventsClient() {
                     {recapPost && (
                       <Link
                         href={`/blog/${recapPost.slug}`}
-                        className="inline-flex items-center text-orange text-sm font-medium hover:text-orange-dark transition-colors group/link"
+                        className="inline-flex items-center min-h-11 text-orange text-sm font-medium hover:text-orange-dark transition-colors group/link"
                       >
                         Read the recap
                         <span
@@ -206,7 +206,7 @@ export default function EventsClient() {
                     <h3 className="font-serif text-2xl font-bold text-navy dark:text-white mb-3">
                       <Link
                         href={`/blog/${recapPost.slug}`}
-                        className="hover:text-orange transition-colors"
+                        className="inline-flex items-center min-h-11 hover:text-orange transition-colors"
                       >
                         {recapPost.title}
                       </Link>
@@ -216,7 +216,7 @@ export default function EventsClient() {
                     </p>
                     <Link
                       href={`/blog/${recapPost.slug}`}
-                      className="inline-flex items-center text-orange text-sm font-medium hover:text-orange-dark transition-colors group/link"
+                      className="inline-flex items-center min-h-11 text-orange text-sm font-medium hover:text-orange-dark transition-colors group/link"
                     >
                       Read the full recap
                       <span

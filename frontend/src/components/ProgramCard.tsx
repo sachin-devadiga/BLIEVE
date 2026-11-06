@@ -50,7 +50,7 @@ export default function ProgramCard({ program }: { program: Program }) {
         </p>
         <Link
           href="/contact"
-          className="inline-flex items-center text-orange text-sm font-medium hover:text-orange-dark transition-colors group/link"
+          className="inline-flex items-center min-h-11 text-orange text-sm font-medium hover:text-orange-dark transition-colors group/link"
           aria-label={`Learn more about ${program.title}`}
         >
           Learn more

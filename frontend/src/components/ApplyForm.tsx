@@ -32,7 +32,7 @@ const fieldCopy: Record<
 };
 
 const inputClass =
-  "w-full px-4 py-3 bg-surface dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all disabled:opacity-60";
+  "w-full px-4 py-3 min-h-11 bg-surface dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all disabled:opacity-60";
 
 function RequiredMark() {
   return (

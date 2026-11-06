@@ -109,7 +109,7 @@ export default function ProgramsClient() {
                   type="button"
                   onClick={() => setActiveCategory(cat.key)}
                   aria-pressed={activeCategory === cat.key}
-                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  className={`px-5 py-2.5 min-h-11 rounded-full text-sm font-medium transition-all ${
                     activeCategory === cat.key
                       ? "bg-orange text-white shadow-lg shadow-orange/20"
                       : "bg-gray-100 dark:bg-white/5 text-text-grey dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10"
@@ -130,7 +130,7 @@ export default function ProgramsClient() {
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="ml-3 inline-flex items-center gap-1 text-orange font-medium hover:text-orange-dark transition-colors"
+                  className="ml-3 inline-flex items-center gap-1 min-h-11 text-orange font-medium hover:text-orange-dark transition-colors"
                 >
                   <X size={14} aria-hidden="true" />
                   Clear filters
@@ -157,7 +157,7 @@ export default function ProgramsClient() {
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-orange text-white text-sm font-semibold rounded-xl hover:bg-orange-light transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 min-h-11 bg-orange text-white text-sm font-semibold rounded-xl hover:bg-orange-light transition-colors"
                 >
                   <X size={16} aria-hidden="true" />
                   Clear filters

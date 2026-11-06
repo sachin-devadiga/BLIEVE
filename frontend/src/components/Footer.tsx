@@ -54,7 +54,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-navy dark:bg-[#080F24] text-white">
+    <footer className="site-footer bg-navy dark:bg-[#080F24] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
           {/* Brand */}
@@ -125,13 +125,13 @@ export default function Footer() {
                       required
                       maxLength={254}
                       autoComplete="email"
-                      className="flex-1 min-w-0 px-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-orange transition-colors"
+                      className="flex-1 min-w-0 px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-orange transition-colors"
                     />
                     <button
                       type="submit"
                       disabled={loading}
                       aria-label="Subscribe to the BLIEVE newsletter"
-                      className="px-4 py-2.5 bg-orange text-white rounded-xl hover:bg-orange-light transition-colors disabled:opacity-50"
+                      className="w-11 shrink-0 flex items-center justify-center bg-orange text-white rounded-xl hover:bg-orange-light transition-colors disabled:opacity-50"
                     >
                       <ArrowRight size={16} />
                     </button>
@@ -149,12 +149,12 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-orange mb-4">
               Explore
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-0.5 sm:space-y-2">
               {exploreLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.path}
-                  className="block text-white/60 text-sm hover:text-orange transition-colors"
+                  className="block text-white/60 text-sm hover:text-orange transition-colors max-lg:flex max-lg:min-h-11 max-lg:items-center"
                 >
                   {link.label}
                 </Link>
@@ -167,12 +167,12 @@ export default function Footer() {
             <h4 className="text-xs font-semibold uppercase tracking-[0.18em] text-orange mb-4">
               Get Involved
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-0.5 sm:space-y-2">
               {involvedLinks.map((link) => (
                 <Link
                   key={link.label}
                   href={link.path}
-                  className="block text-white/60 text-sm hover:text-orange transition-colors"
+                  className="block text-white/60 text-sm hover:text-orange transition-colors max-lg:flex max-lg:min-h-11 max-lg:items-center"
                 >
                   {link.label}
                 </Link>
@@ -198,7 +198,7 @@ export default function Footer() {
                 <Mail size={16} className="text-orange shrink-0" />
                 <a
                   href={`mailto:${siteData.contact.email}`}
-                  className="text-white/60 text-sm hover:text-orange transition-colors"
+                  className="text-white/60 text-sm hover:text-orange transition-colors max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                 >
                   {siteData.contact.email}
                 </a>
@@ -207,7 +207,7 @@ export default function Footer() {
                 <Phone size={16} className="text-orange shrink-0" />
                 <a
                   href={`tel:${siteData.contact.phoneHref}`}
-                  className="text-white/60 text-sm hover:text-orange transition-colors"
+                  className="text-white/60 text-sm hover:text-orange transition-colors max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                 >
                   {siteData.contact.phone}
                 </a>
@@ -218,7 +218,7 @@ export default function Footer() {
                   href={siteData.contact.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/60 text-sm hover:text-orange transition-colors"
+                  className="text-white/60 text-sm hover:text-orange transition-colors max-lg:inline-flex max-lg:min-h-11 max-lg:items-center"
                 >
                   {siteData.contact.instagramHandle}
                 </a>
@@ -244,11 +244,11 @@ export default function Footer() {
               {INSTITUTION}, {INSTITUTION_LOCATION}. All rights reserved.
             </p>
           </div>
-          <div className="flex items-center gap-4 text-xs">
-            <Link href="/privacy" className="text-white/40 hover:text-orange transition-colors">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs">
+            <Link href="/privacy" className="text-white/40 hover:text-orange transition-colors max-lg:inline-flex max-lg:min-h-11 max-lg:items-center">
               Privacy Policy
             </Link>
-            <Link href="/terms" className="text-white/40 hover:text-orange transition-colors">
+            <Link href="/terms" className="text-white/40 hover:text-orange transition-colors max-lg:inline-flex max-lg:min-h-11 max-lg:items-center">
               Terms of Use
             </Link>
             <span className="text-white/40">{siteData.hashtag}</span>

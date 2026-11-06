@@ -35,7 +35,7 @@ export default function BlogSlugClient({ slug }: { slug: string }) {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-orange text-sm font-medium mb-6 hover:gap-3 transition-all"
+            className="inline-flex items-center gap-2 min-h-11 text-orange text-sm font-medium mb-6 hover:gap-3 transition-all"
           >
             <ArrowLeft size={16} aria-hidden="true" /> Back to Blog
           </Link>

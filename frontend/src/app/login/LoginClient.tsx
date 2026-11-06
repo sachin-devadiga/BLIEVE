@@ -25,7 +25,7 @@ import { siteData } from "@/data/siteData";
 type Mode = "signin" | "signup";
 
 const inputClass =
-  "w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all";
+  "w-full px-4 py-3 min-h-11 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all";
 const labelClass = "block text-sm font-medium text-navy dark:text-white mb-1.5";
 
 const perks = [
@@ -246,7 +246,7 @@ export default function LoginClient() {
                     role="tab"
                     aria-selected={mode === "signin"}
                     onClick={() => switchMode("signin")}
-                    className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                    className={`py-2.5 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
                       mode === "signin"
                         ? "bg-orange text-white shadow-sm"
                         : "text-text-grey dark:text-gray-400 hover:text-navy dark:hover:text-white"
@@ -259,7 +259,7 @@ export default function LoginClient() {
                     role="tab"
                     aria-selected={mode === "signup"}
                     onClick={() => switchMode("signup")}
-                    className={`py-2.5 rounded-lg text-sm font-semibold transition-colors ${
+                    className={`py-2.5 min-h-11 rounded-lg text-sm font-semibold transition-colors ${
                       mode === "signup"
                         ? "bg-orange text-white shadow-sm"
                         : "text-text-grey dark:text-gray-400 hover:text-navy dark:hover:text-white"

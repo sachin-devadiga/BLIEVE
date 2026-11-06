@@ -107,7 +107,7 @@ export default function TermsPage() {
             </p>
           </div>
           <p>
-            <Link href="/" className="text-orange hover:underline">
+            <Link href="/" className="inline-flex items-center min-h-11 text-orange hover:underline">
               &larr; Back to home
             </Link>
           </p>

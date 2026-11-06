@@ -27,7 +27,7 @@ import {
 } from "@/lib/membership/options";
 
 const inputClass =
-  "w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all disabled:opacity-60";
+  "w-full px-4 py-3 min-h-11 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-navy dark:text-white placeholder:text-text-light focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange/30 transition-all disabled:opacity-60";
 
 const statusClass: Record<ApplicationStatus, string> = {
   "Pending Review": "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
@@ -794,7 +794,7 @@ export default function AdminClient() {
               type="button"
               onClick={loadList}
               disabled={listLoading}
-              className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/15 text-sm font-semibold text-navy dark:text-white rounded-xl hover:bg-white dark:hover:bg-white/5 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 min-h-11 border border-gray-200 dark:border-white/15 text-sm font-semibold text-navy dark:text-white rounded-xl hover:bg-white dark:hover:bg-white/5 transition-colors disabled:opacity-50"
             >
               <RefreshCw
                 size={15}
@@ -805,7 +805,7 @@ export default function AdminClient() {
             </button>
             <Link
               href="/profile"
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-orange text-white text-sm font-semibold rounded-xl hover:bg-orange-light transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 min-h-11 bg-orange text-white text-sm font-semibold rounded-xl hover:bg-orange-light transition-colors"
             >
               <User size={15} aria-hidden="true" />
               Profile
