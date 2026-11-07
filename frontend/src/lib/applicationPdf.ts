@@ -204,16 +204,14 @@ export async function downloadApplicationPdf(
 
   heading("Startup Information");
   application.startups.forEach((startup, index) => {
-    ensure(12);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10.5);
+    const title = `${index + 1}. ${startup.name || "Untitled startup"}`;
+    const titleLines = doc.splitTextToSize(title, contentWidth) as string[];
+    ensure(titleLines.length * 5 + 5);
     doc.setTextColor(...NAVY);
-    doc.text(
-      `${index + 1}. ${startup.name || "Untitled startup"}`,
-      margin,
-      y + 4
-    );
-    y += 8;
+    doc.text(titleLines, margin, y + 4);
+    y += titleLines.length * 5 + 3;
     pair(
       { label: "Stage", value: startup.stage },
       { label: "Your role", value: startup.role }
@@ -294,11 +292,7 @@ export async function downloadApplicationPdf(
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.setTextColor(...MUTED);
-    doc.text(
-      `BLIEVE E-Cell · Membership Application · ${application.id}`,
-      margin,
-      pageHeight - 9
-    );
+    doc.text(`BLIEVE E-Cell · ${application.id}`, margin, pageHeight - 9);
     doc.text(`Page ${page} of ${pageCount}`, pageWidth - margin, pageHeight - 9, {
       align: "right",
     });
