@@ -4,6 +4,12 @@ const NAVY: [number, number, number] = [11, 31, 58];
 const ORANGE: [number, number, number] = [224, 106, 32];
 const TEXT: [number, number, number] = [74, 74, 74];
 const MUTED: [number, number, number] = [122, 122, 122];
+const RULE: [number, number, number] = [226, 226, 226];
+
+const INSTITUTION = "ADITYA COLLEGE OF ENGINEERING & TECHNOLOGY";
+const LOCATION = "BENGALURU, KARNATAKA";
+const SITE = "www.blieve.in";
+const EMAIL = "president@blieve.in";
 
 function formatDate(value: string | null | undefined): string {
   if (!value) return "";
@@ -32,10 +38,32 @@ function fileNameFor(application: MembershipApplication): string {
   return `BLIEVE-Membership-${application.id}${slug ? `-${slug}` : ""}.pdf`;
 }
 
+async function loadImageDataUrl(src: string): Promise<string | null> {
+  try {
+    const response = await fetch(src, { cache: "force-cache" });
+    if (!response.ok) return null;
+    const blob = await response.blob();
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    let binary = "";
+    const chunkSize = 0x8000;
+    for (let index = 0; index < bytes.length; index += chunkSize) {
+      binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+    }
+    return `data:${blob.type || "image/png"};base64,${btoa(binary)}`;
+  } catch {
+    return null;
+  }
+}
+
 export async function downloadApplicationPdf(
   application: MembershipApplication
 ): Promise<void> {
-  const { jsPDF } = await import("jspdf");
+  const [{ jsPDF }, acetLogo, blieveLogo] = await Promise.all([
+    import("jspdf"),
+    loadImageDataUrl("/acet-logo.png"),
+    loadImageDataUrl("/blieve-logo.png"),
+  ]);
+
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -52,7 +80,20 @@ export async function downloadApplicationPdf(
 
   const newPage = () => {
     doc.addPage();
-    y = 18;
+    doc.setFillColor(...ORANGE);
+    doc.rect(0, 0, pageWidth, 1.2, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7.5);
+    doc.setTextColor(...NAVY);
+    doc.text("BLIEVE E-CELL", margin, 10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...MUTED);
+    doc.text(`Membership Application · ${application.id}`, margin + 28, 10);
+    doc.text("(continued)", pageWidth - margin, 10, { align: "right" });
+    doc.setDrawColor(...RULE);
+    doc.setLineWidth(0.3);
+    doc.line(margin, 12.5, pageWidth - margin, 12.5);
+    y = 20;
   };
 
   const ensure = (height: number) => {
@@ -128,61 +169,112 @@ export async function downloadApplicationPdf(
 
   const divider = () => {
     ensure(5);
-    doc.setDrawColor(228, 228, 228);
+    doc.setDrawColor(...RULE);
+    doc.setLineWidth(0.3);
     doc.line(margin, y + 1, pageWidth - margin, y + 1);
     y += 5;
   };
 
-  /* ------------------------------ header ------------------------------ */
+  const drawLogo = (
+    dataUrl: string | null,
+    x: number,
+    box: number,
+    fallback: string
+  ) => {
+    const top = 8;
+    if (dataUrl) {
+      try {
+        const props = doc.getImageProperties(dataUrl);
+        const ratio = Math.min(box / props.width, box / props.height);
+        const width = props.width * ratio;
+        const height = props.height * ratio;
+        doc.addImage(
+          dataUrl,
+          "PNG",
+          x + (box - width) / 2,
+          top + (box - height) / 2,
+          width,
+          height,
+          undefined,
+          "FAST"
+        );
+        return;
+      } catch {
+        /* fall back to the text mark below */
+      }
+    }
+    doc.setDrawColor(...NAVY);
+    doc.setLineWidth(0.4);
+    doc.circle(x + box / 2, top + box / 2, box / 2 - 0.5, "S");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7);
+    doc.setTextColor(...NAVY);
+    doc.text(fallback, x + box / 2, top + box / 2 + 2, { align: "center" });
+  };
 
-  doc.setFillColor(...NAVY);
-  doc.rect(0, 0, pageWidth, 40, "F");
   doc.setFillColor(...ORANGE);
-  doc.rect(0, 0, pageWidth, 2, "F");
+  doc.rect(0, 0, pageWidth, 1.6, "F");
 
+  drawLogo(acetLogo, margin, 20, "ACET");
+  drawLogo(blieveLogo, pageWidth - margin - 20, 20, "B");
+
+  const centerX = pageWidth / 2;
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.5);
-  doc.setTextColor(...ORANGE);
-  doc.text("BLIEVE E-CELL", margin, 14);
-
-  doc.setFontSize(19);
-  doc.setTextColor(255, 255, 255);
-  doc.text("Membership Application", margin, 23);
-
+  doc.setFontSize(7.5);
+  doc.setTextColor(...NAVY);
+  doc.text(INSTITUTION, centerX, 13, { align: "center" });
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.5);
-  doc.setTextColor(255, 255, 255);
-  doc.text(`Application ${application.id}`, margin, 31);
-  doc.text(
-    `Submitted ${formatDate(application.submittedAt)}`,
-    margin,
-    36
-  );
+  doc.setFontSize(6.5);
+  doc.setTextColor(...MUTED);
+  doc.text(LOCATION, centerX, 17, { align: "center" });
 
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
-  const statusLabel = application.status;
-  const statusWidth = doc.getTextWidth(statusLabel) + 8;
-  doc.setFillColor(...ORANGE);
-  doc.roundedRect(
-    pageWidth - margin - statusWidth,
-    25,
-    statusWidth,
-    7,
-    3.5,
-    3.5,
-    "F"
-  );
-  doc.setTextColor(255, 255, 255);
-  doc.text(statusLabel, pageWidth - margin - statusWidth / 2, 29.7, {
-    align: "center",
+  doc.setFontSize(10);
+  doc.setTextColor(...ORANGE);
+  doc.text("BLIEVE E-CELL", centerX, 24, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(6.5);
+  doc.setTextColor(...MUTED);
+  doc.text("ENTREPRENEURSHIP CELL", centerX, 27.5, { align: "center" });
+
+  doc.setDrawColor(...ORANGE);
+  doc.setLineWidth(0.3);
+  doc.line(centerX - 16, 30.5, centerX + 16, 30.5);
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.setTextColor(...NAVY);
+  doc.text("MEMBERSHIP APPLICATION", centerX, 37.5, { align: "center" });
+
+  doc.setDrawColor(...NAVY);
+  doc.setLineWidth(0.5);
+  doc.line(margin, 42.5, pageWidth - margin, 42.5);
+  doc.setDrawColor(...ORANGE);
+  doc.setLineWidth(0.3);
+  doc.line(margin, 43.5, pageWidth - margin, 43.5);
+
+  doc.setFillColor(247, 245, 240);
+  doc.roundedRect(margin, 47, contentWidth, 14, 1.5, 1.5, "F");
+  const metaColumns = [
+    { label: "APPLICATION NO.", value: application.id },
+    { label: "SUBMITTED", value: formatDate(application.submittedAt) },
+    { label: "STATUS", value: application.status },
+  ];
+  const metaWidth = contentWidth / 3;
+  metaColumns.forEach((item, index) => {
+    const x = margin + 6 + index * metaWidth;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(6.5);
+    doc.setTextColor(...MUTED);
+    doc.text(item.label, x, 53);
+    doc.setFontSize(9);
+    doc.setTextColor(...(index === 2 ? ORANGE : NAVY));
+    doc.text(item.value, x, 58.5);
   });
 
-  y = 50;
+  y = 70;
 
-  /* ----------------------------- applicant ---------------------------- */
-
-  heading("Applicant");
+  heading("01. Applicant Details");
   pair(
     { label: "Full name", value: application.personal.fullName },
     { label: "USN", value: application.personal.usn }
@@ -195,14 +287,9 @@ export async function downloadApplicationPdf(
     { label: "Contact number", value: application.personal.phone },
     { label: "College email", value: application.personal.email }
   );
-  field(
-    "Actively working on a startup",
-    yesNo(application.activelyWorking)
-  );
+  field("Actively working on a startup", yesNo(application.activelyWorking));
 
-  /* ----------------------------- startups ----------------------------- */
-
-  heading("Startup Information");
+  heading("02. Startup Information");
   application.startups.forEach((startup, index) => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(10.5);
@@ -231,17 +318,13 @@ export async function downloadApplicationPdf(
     if (index < application.startups.length - 1) divider();
   });
 
-  /* ------------------------ skills & contribution --------------------- */
-
-  heading("Skills & Contribution");
+  heading("03. Skills & Contribution");
   field("Skills", joined(application.skills));
   field("Hours per week", application.hoursPerWeek);
   field("Contribution", application.contribution);
   field("Current challenges", application.challenges);
 
-  /* ---------------------- membership motivation ----------------------- */
-
-  heading("BLIEVE E-Cell Membership");
+  heading("04. BLIEVE E-Cell Membership");
   field("Why join BLIEVE E-Cell", application.whyJoin);
   field("Expectations", joined(application.expectations));
   pair(
@@ -265,9 +348,7 @@ export async function downloadApplicationPdf(
     }
   );
 
-  /* ------------------------------- review ----------------------------- */
-
-  heading("Review");
+  heading("05. Review & Decision");
   pair(
     { label: "Application status", value: application.status },
     { label: "Reviewed at", value: formatDate(application.reviewedAt) }
@@ -275,29 +356,62 @@ export async function downloadApplicationPdf(
   field("Internal review notes", application.reviewNotes);
 
   if (application.meeting) {
-    heading("Meeting with the E-Cell team");
+    heading("Meeting with the E-Cell Team");
     field("Date & time", formatDate(application.meeting.at));
     field("Venue or online link", application.meeting.link);
     field("Message for the member", application.meeting.notes);
   }
 
-  /* ------------------------------- footer ----------------------------- */
+  heading("06. Declaration");
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(...TEXT);
+  const declarationLines = doc.splitTextToSize(
+    "I hereby declare that the information furnished in this application is true, complete and correct to the best of my knowledge. I agree to abide by the rules, guidelines and code of conduct of BLIEVE E-Cell.",
+    contentWidth
+  ) as string[];
+  ensure(declarationLines.length * 4.6 + 30);
+  doc.text(declarationLines, margin, y);
+  y += declarationLines.length * 4.6 + 18;
+
+  doc.setDrawColor(120, 120, 120);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y, margin + 62, y);
+  doc.line(pageWidth - margin - 62, y, pageWidth - margin, y);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(...MUTED);
+  doc.text("Date & Signature of Applicant", margin, y + 4);
+  doc.text("For BLIEVE E-Cell", pageWidth - margin, y + 4, {
+    align: "right",
+  });
 
   const generatedAt = formatDate(new Date().toISOString());
   const pageCount = doc.getNumberOfPages();
   for (let page = 1; page <= pageCount; page += 1) {
     doc.setPage(page);
-    doc.setDrawColor(228, 228, 228);
-    doc.line(margin, pageHeight - 14, pageWidth - margin, pageHeight - 14);
+    doc.setDrawColor(...RULE);
+    doc.setLineWidth(0.3);
+    doc.line(margin, pageHeight - 16, pageWidth - margin, pageHeight - 16);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(7);
+    doc.setTextColor(...NAVY);
+    doc.text(
+      "BLIEVE E-Cell · Aditya College of Engineering & Technology",
+      margin,
+      pageHeight - 11
+    );
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(7.5);
     doc.setTextColor(...MUTED);
-    doc.text(`BLIEVE E-Cell · ${application.id}`, margin, pageHeight - 9);
-    doc.text(`Page ${page} of ${pageCount}`, pageWidth - margin, pageHeight - 9, {
+    doc.text(
+      `Page ${page} of ${pageCount}`,
+      pageWidth - margin,
+      pageHeight - 11,
+      { align: "right" }
+    );
+    doc.text(`${SITE} · ${EMAIL}`, margin, pageHeight - 6.5);
+    doc.text(`Generated ${generatedAt}`, pageWidth - margin, pageHeight - 6.5, {
       align: "right",
-    });
-    doc.text(`Generated ${generatedAt}`, pageWidth / 2, pageHeight - 9, {
-      align: "center",
     });
   }
 
