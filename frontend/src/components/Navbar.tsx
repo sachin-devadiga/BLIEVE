@@ -31,6 +31,7 @@ const navItems: NavItem[] = [
     ],
   },
   { label: "Blog", path: "/blog" },
+  { label: "Board", path: "/#board" },
   { label: "Contact", path: "/contact" },
 ];
 
@@ -38,6 +39,7 @@ const primaryGroup = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
   { label: "Blog", path: "/blog" },
+  { label: "Board", path: "/#board" },
   { label: "Contact", path: "/contact" },
 ];
 
