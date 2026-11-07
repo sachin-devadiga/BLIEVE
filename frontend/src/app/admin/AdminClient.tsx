@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import {
   ArrowLeft,
   CheckCircle2,
+  Download,
   Loader2,
   LogOut,
   Lock,
@@ -19,6 +20,7 @@ import {
   subscribeSession,
 } from "@/lib/clientAuth";
 import { signOutEverywhere } from "@/lib/signOut";
+import { downloadApplicationPdf } from "@/lib/applicationPdf";
 import { apiUrl } from "@/lib/api";
 import {
   APPLICATION_STATUSES,
@@ -130,6 +132,8 @@ export default function AdminClient() {
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const loadList = useCallback(async () => {
     setListLoading(true);
@@ -196,6 +200,7 @@ export default function AdminClient() {
     setDetailLoading(true);
     setSaveMessage(null);
     setSaveError(null);
+    setDownloadError(null);
     setSelected(null);
     try {
       const response = await fetch(apiUrl(`/api/admin/applications/${id}`), {
@@ -272,6 +277,18 @@ export default function AdminClient() {
       setSaveError("Could not save changes. Please try again.");
     }
     setSaving(false);
+  };
+
+  const downloadPdf = async () => {
+    if (!selected || downloading) return;
+    setDownloadError(null);
+    setDownloading(true);
+    try {
+      await downloadApplicationPdf(selected);
+    } catch {
+      setDownloadError("Could not create the PDF. Please try again.");
+    }
+    setDownloading(false);
   };
 
   const filtered = summaries.filter((item) => {
@@ -471,6 +488,31 @@ export default function AdminClient() {
                     <p className="text-white/50 text-xs mt-2">
                       Submitted {formatDate(selected.submittedAt)}
                     </p>
+                    <button
+                      type="button"
+                      onClick={downloadPdf}
+                      disabled={downloading}
+                      className="mt-3 inline-flex items-center justify-center gap-2 px-4 py-2.5 min-h-11 rounded-xl border border-white/25 bg-white/10 text-sm font-semibold text-white hover:bg-white/20 transition-colors disabled:opacity-50"
+                    >
+                      {downloading ? (
+                        <Loader2
+                          size={15}
+                          aria-hidden="true"
+                          className="animate-spin"
+                        />
+                      ) : (
+                        <Download size={15} aria-hidden="true" />
+                      )}
+                      {downloading ? "Preparing PDF..." : "Download PDF"}
+                    </button>
+                    {downloadError && (
+                      <p
+                        role="alert"
+                        className="mt-2 text-xs text-red-300"
+                      >
+                        {downloadError}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
