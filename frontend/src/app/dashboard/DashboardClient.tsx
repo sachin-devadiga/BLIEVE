@@ -6,8 +6,10 @@ import {
   ArrowRight,
   Calendar,
   ClipboardList,
+  Download,
   FileText,
   GraduationCap,
+  Loader2,
   Mail,
   Rocket,
   ShieldCheck,
@@ -19,11 +21,14 @@ import {
   getSession,
   getServerSession,
   subscribeSession,
+  type Session,
 } from "@/lib/clientAuth";
 import { apiUrl } from "@/lib/api";
+import { downloadApplicationPdf } from "@/lib/applicationPdf";
 import {
   type ApplicationStatus,
   type ApplicationMeeting,
+  type MembershipApplication,
 } from "@/lib/membership/options";
 
 type MyApplication = {
@@ -61,7 +66,74 @@ function formatDate(value: string): string {
       });
 }
 
-function ApprovedMeetingCard({ application }: { application: MyApplication }) {
+function ApplicationPdfButton({
+  applicationId,
+  tone = "light",
+}: {
+  applicationId: string;
+  tone?: "light" | "inverted";
+}) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleDownload = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const response = await fetch(
+        apiUrl(`/api/auth/my-applications/${applicationId}`),
+        { cache: "no-store", credentials: "include" }
+      );
+      if (!response.ok) throw new Error("request failed");
+      const data = (await response.json()) as {
+        application?: MembershipApplication;
+      };
+      if (!data.application) throw new Error("missing application");
+      await downloadApplicationPdf(data.application, { audience: "member" });
+    } catch {
+      setError(true);
+    }
+    setLoading(false);
+  };
+
+  const toneClass =
+    tone === "inverted"
+      ? "border-white/40 text-white hover:bg-white/10"
+      : "border-gray-200 dark:border-white/15 text-navy dark:text-white hover:border-orange hover:text-orange";
+
+  return (
+    <span className="inline-flex flex-col items-end gap-1">
+      <button
+        type="button"
+        onClick={handleDownload}
+        disabled={loading}
+        aria-label={`Download application ${applicationId} as PDF`}
+        className={`inline-flex items-center gap-1.5 px-3 min-h-11 rounded-xl border text-xs font-semibold transition-colors disabled:opacity-50 ${toneClass}`}
+      >
+        {loading ? (
+          <Loader2 size={14} aria-hidden="true" className="animate-spin" />
+        ) : (
+          <Download size={14} aria-hidden="true" />
+        )}
+        {loading ? "Preparing..." : "PDF"}
+      </button>
+      {error && (
+        <span
+          role="alert"
+          className={`text-[10px] ${
+            tone === "inverted"
+              ? "text-white"
+              : "text-red-600 dark:text-red-300"
+          }`}
+        >
+          Could not create PDF
+        </span>
+      )}
+    </span>
+  );
+}
+
+function MeetingCard({ application }: { application: MyApplication }) {
   const meeting = application.meeting;
   return (
     <AnimatedSection>
@@ -90,6 +162,15 @@ function ApprovedMeetingCard({ application }: { application: MyApplication }) {
               Bring your startup questions and any material you would like to
               discuss. See you there!
             </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <ApplicationPdfButton
+                applicationId={application.id}
+                tone="inverted"
+              />
+              <span className="text-sm text-white/70">
+                Application and meeting details
+              </span>
+            </div>
           </>
         ) : (
           <h2 className="font-serif text-xl md:text-2xl font-bold">
@@ -148,112 +229,53 @@ export default function DashboardClient() {
     );
   }
 
-  const isAdmin = session.role === "admin";
-
-  return (
-    <>
-      {isAdmin ? (
+  if (session.role === "admin") {
+    return (
+      <>
         <AdminHero
           name={session.name}
           title={session.title}
           avatar={session.avatar}
         />
-      ) : (
-        <MemberHero
-          name={session.name}
-          title={session.title}
-          avatar={session.avatar}
-        />
-      )}
-
-      <section
-        className={`py-16 ${
-          isAdmin
-            ? "bg-surface dark:bg-[#0B0B14]"
-            : "bg-white dark:bg-[#0F0F1A]"
-        }`}
-      >
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          {isAdmin ? (
+        <section className="py-16 bg-surface dark:bg-[#0B0B14]">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             <AdminBody email={session.email} />
-          ) : (
-            <MemberBody email={session.email} />
-          )}
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  return <MemberDashboard session={session} />;
+}
+
+function MemberDashboard({ session }: { session: Session }) {
+  const { applications, loadError } = useMyApplications();
+  const canApply = applications !== null && applications.length === 0;
+
+  return (
+    <>
+      <MemberHero
+        name={session.name}
+        title={session.title}
+        avatar={session.avatar}
+        canApply={canApply}
+      />
+      <section className="py-16 bg-white dark:bg-[#0F0F1A]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <MemberBody
+            email={session.email}
+            applications={applications}
+            loadError={loadError}
+          />
         </div>
       </section>
     </>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  MEMBER                                                             */
-/* ------------------------------------------------------------------ */
-
-function MemberHero({
-  name,
-  title,
-  avatar,
-}: {
-  name: string;
-  title: string;
-  avatar: string;
-}) {
-  return (
-    <section className="bg-navy dark:bg-[#080F24] pt-28 pb-16 lg:pt-36 lg:pb-20 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-10 left-10 w-48 h-48 bg-orange rounded-full blur-[100px]" />
-        <div className="absolute bottom-10 right-10 w-64 h-64 bg-orange rounded-full blur-[120px]" />
-      </div>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <AnimatedSection>
-          <div className="flex flex-wrap items-center gap-5">
-            <div
-              className="w-16 h-16 rounded-2xl bg-orange text-white flex items-center justify-center font-serif font-bold text-2xl shrink-0"
-              aria-hidden="true"
-            >
-              {avatar}
-            </div>
-            <div className="min-w-0">
-              <p className="text-orange font-medium text-xs mb-1.5 tracking-wider uppercase">
-                Member Dashboard
-              </p>
-              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-white">
-                Welcome, {name}
-              </h1>
-              <p className="text-white/55 text-sm mt-1">{title}</p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3 mt-8">
-            <Link
-              href="/membership"
-              className="inline-flex items-center gap-2 px-6 py-3.5 bg-orange text-white font-semibold rounded-xl hover:bg-orange-light transition-colors shadow-lg shadow-orange/20"
-            >
-              <Rocket size={17} aria-hidden="true" />
-              Apply for Startup Membership
-            </Link>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 px-6 py-3.5 border border-white/25 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors"
-            >
-              Back to site
-            </Link>
-            <Link
-              href="/profile"
-              className="inline-flex items-center gap-2 px-6 py-3.5 border border-white/25 text-white/80 font-semibold rounded-xl hover:bg-white/10 hover:text-white transition-colors"
-            >
-              <User size={17} aria-hidden="true" />
-              Profile
-            </Link>
-          </div>
-        </AnimatedSection>
-      </div>
-    </section>
-  );
-}
-
-function MemberBody({ email }: { email: string }) {
-  const [applications, setApplications] = useState<MyApplication [] | null>(
+function useMyApplications() {
+  const [applications, setApplications] = useState<MyApplication[] | null>(
     null
   );
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -283,7 +305,93 @@ function MemberBody({ email }: { email: string }) {
     };
   }, []);
 
+  return { applications, loadError };
+}
+
+/* ------------------------------------------------------------------ */
+/*  MEMBER                                                             */
+/* ------------------------------------------------------------------ */
+
+function MemberHero({
+  name,
+  title,
+  avatar,
+  canApply,
+}: {
+  name: string;
+  title: string;
+  avatar: string;
+  canApply: boolean;
+}) {
+  return (
+    <section className="bg-navy dark:bg-[#080F24] pt-28 pb-16 lg:pt-36 lg:pb-20 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-10 left-10 w-48 h-48 bg-orange rounded-full blur-[100px]" />
+        <div className="absolute bottom-10 right-10 w-64 h-64 bg-orange rounded-full blur-[120px]" />
+      </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <AnimatedSection>
+          <div className="flex flex-wrap items-center gap-5">
+            <div
+              className="w-16 h-16 rounded-2xl bg-orange text-white flex items-center justify-center font-serif font-bold text-2xl shrink-0"
+              aria-hidden="true"
+            >
+              {avatar}
+            </div>
+            <div className="min-w-0">
+              <p className="text-orange font-medium text-xs mb-1.5 tracking-wider uppercase">
+                Member Dashboard
+              </p>
+              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-white">
+                Welcome, {name}
+              </h1>
+              <p className="text-white/55 text-sm mt-1">{title}</p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3 mt-8">
+            {canApply && (
+              <Link
+                href="/membership"
+                className="inline-flex items-center gap-2 px-6 py-3.5 bg-orange text-white font-semibold rounded-xl hover:bg-orange-light transition-colors shadow-lg shadow-orange/20"
+              >
+                <Rocket size={17} aria-hidden="true" />
+                Apply for Startup Membership
+              </Link>
+            )}
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-6 py-3.5 border border-white/25 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors"
+            >
+              Back to site
+            </Link>
+            <Link
+              href="/profile"
+              className="inline-flex items-center gap-2 px-6 py-3.5 border border-white/25 text-white/80 font-semibold rounded-xl hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <User size={17} aria-hidden="true" />
+              Profile
+            </Link>
+          </div>
+        </AnimatedSection>
+      </div>
+    </section>
+  );
+}
+
+function MemberBody({
+  email,
+  applications,
+  loadError,
+}: {
+  email: string;
+  applications: MyApplication[] | null;
+  loadError: string | null;
+}) {
   const latest = applications && applications.length > 0 ? applications[0] : null;
+  const meetingApplication =
+    applications?.find((application) => application.meeting) ??
+    (latest?.status === "Approved" ? latest : null);
   const tiles: { value: string; label: string }[] = [
     { value: "MEMBER", label: "Your role" },
     {
@@ -322,8 +430,8 @@ function MemberBody({ email }: { email: string }) {
         )}
       </AnimatedSection>
 
-      {latest?.status === "Approved" && (
-        <ApprovedMeetingCard application={latest} />
+      {meetingApplication && (
+        <MeetingCard application={meetingApplication} />
       )}
 
       {latest && (
@@ -351,17 +459,19 @@ function MemberBody({ email }: { email: string }) {
                       {application.id} ·{" "}
                       {formatDate(application.submittedAt)}
                     </span>
-                    {application.status === "Approved" &&
-                      application.meeting && (
-                        <span className="block text-xs text-orange mt-1 font-medium">
-                          Meeting: {formatDate(application.meeting.at)}
-                          {application.meeting.link
-                            ? ` · ${application.meeting.link}`
-                            : ""}
-                        </span>
-                      )}
+                    {application.meeting && (
+                      <span className="block text-xs text-orange mt-1 font-medium">
+                        Meeting: {formatDate(application.meeting.at)}
+                        {application.meeting.link
+                          ? ` · ${application.meeting.link}`
+                          : ""}
+                      </span>
+                    )}
                   </span>
-                  <StatusBadge status={application.status} />
+                  <div className="flex items-center gap-2 shrink-0">
+                    <ApplicationPdfButton applicationId={application.id} />
+                    <StatusBadge status={application.status} />
+                  </div>
                 </li>
               ))}
             </ul>
@@ -369,28 +479,30 @@ function MemberBody({ email }: { email: string }) {
         </AnimatedSection>
       )}
 
-      <AnimatedSection>
-        <div className="bg-navy dark:bg-[#1A1A2E] rounded-3xl p-8 md:p-10">
-          <p className="text-orange font-medium text-sm mb-3 tracking-wider uppercase">
-            Startup Membership
-          </p>
-          <h2 className="font-serif text-2xl md:text-3xl font-bold text-white mb-3">
-            Building a startup at ACET?
-          </h2>
-          <p className="text-white/60 leading-relaxed mb-6 max-w-2xl">
-            Membership is open to students actively working on at least one
-            startup. Apply with your venture details and the E-Cell team will
-            verify your eligibility.
-          </p>
-          <Link
-            href="/membership"
-            className="inline-flex items-center gap-2 px-6 py-3.5 bg-orange text-white font-semibold rounded-xl hover:bg-orange-light transition-colors shadow-lg shadow-orange/20"
-          >
-            Go to membership form
-            <ArrowRight size={16} aria-hidden="true" />
-          </Link>
-        </div>
-      </AnimatedSection>
+      {applications !== null && applications.length === 0 && (
+        <AnimatedSection>
+          <div className="bg-navy dark:bg-[#1A1A2E] rounded-3xl p-8 md:p-10">
+            <p className="text-orange font-medium text-sm mb-3 tracking-wider uppercase">
+              Startup Membership
+            </p>
+            <h2 className="font-serif text-2xl md:text-3xl font-bold text-white mb-3">
+              Building a startup at ACET?
+            </h2>
+            <p className="text-white/60 leading-relaxed mb-6 max-w-2xl">
+              Membership is open to students actively working on at least one
+              startup. Apply with your venture details and the E-Cell team will
+              verify your eligibility.
+            </p>
+            <Link
+              href="/membership"
+              className="inline-flex items-center gap-2 px-6 py-3.5 bg-orange text-white font-semibold rounded-xl hover:bg-orange-light transition-colors shadow-lg shadow-orange/20"
+            >
+              Go to membership form
+              <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </div>
+        </AnimatedSection>
+      )}
 
       <AnimatedSection>
         <h2 className="font-serif text-2xl font-bold text-navy dark:text-white mb-6">

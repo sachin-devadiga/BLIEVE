@@ -55,9 +55,15 @@ async function loadImageDataUrl(src: string): Promise<string | null> {
   }
 }
 
+export type ApplicationPdfOptions = {
+  audience?: "admin" | "member";
+};
+
 export async function downloadApplicationPdf(
-  application: MembershipApplication
+  application: MembershipApplication,
+  options: ApplicationPdfOptions = {}
 ): Promise<void> {
+  const memberCopy = options.audience === "member";
   const [{ jsPDF }, acetLogo, blieveLogo] = await Promise.all([
     import("jspdf"),
     loadImageDataUrl("/acet-logo.png"),
@@ -101,7 +107,7 @@ export async function downloadApplicationPdf(
   };
 
   const heading = (title: string) => {
-    ensure(13);
+    ensure(35);
     doc.setFillColor(...ORANGE);
     doc.rect(margin, y + 1, 2.5, 5, "F");
     doc.setFont("helvetica", "bold");
@@ -348,12 +354,16 @@ export async function downloadApplicationPdf(
     }
   );
 
-  heading("05. Review & Decision");
+  heading(memberCopy ? "05. Application Status" : "05. Review & Decision");
   pair(
     { label: "Application status", value: application.status },
-    { label: "Reviewed at", value: formatDate(application.reviewedAt) }
+    memberCopy
+      ? null
+      : { label: "Reviewed at", value: formatDate(application.reviewedAt) }
   );
-  field("Internal review notes", application.reviewNotes);
+  if (!memberCopy) {
+    field("Internal review notes", application.reviewNotes);
+  }
 
   if (application.meeting) {
     heading("Meeting with the E-Cell Team");

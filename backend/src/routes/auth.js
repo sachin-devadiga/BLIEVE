@@ -14,7 +14,7 @@ import {
   isAdminConfigured,
   ADMIN_SESSION_COOKIE,
 } from "../lib/sessions.js";
-import { listApplicationsByEmail } from "../lib/applications.js";
+import { getApplication, listApplicationsByEmail } from "../lib/applications.js";
 import { ensureIndexes } from "../lib/mongodb.js";
 import { clientIp, rateLimit } from "../lib/rateLimit.js";
 import { config } from "../config.js";
@@ -175,6 +175,34 @@ router.get("/auth/my-applications", async (req, res) => {
     });
   } catch (error) {
     console.error("[auth/my-applications] database unavailable", error);
+    fail(res, 503, "Database unavailable");
+  }
+});
+
+router.get("/auth/my-applications/:id", async (req, res) => {
+  const payload = readMemberPayload(req.cookies?.[MEMBER_SESSION_COOKIE]);
+  if (!payload) return fail(res, 401, "Unauthorized");
+
+  try {
+    const application = await getApplication(String(req.params.id || ""));
+    if (!application) return fail(res, 404, "Application not found");
+
+    const memberEmail = String(payload.email || "").toLowerCase();
+    const ownsApplication =
+      String(application.personal?.email || "").toLowerCase() === memberEmail ||
+      String(application.memberEmail || "").toLowerCase() === memberEmail;
+    if (!ownsApplication) return fail(res, 404, "Application not found");
+
+    const safeApplication = {
+      ...application,
+      reviewNotes: "",
+      reviewedAt: null,
+    };
+    delete safeApplication.memberEmail;
+
+    res.json({ application: safeApplication });
+  } catch (error) {
+    console.error("[auth/my-applications/:id] database unavailable", error);
     fail(res, 503, "Database unavailable");
   }
 });
