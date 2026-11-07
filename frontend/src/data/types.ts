@@ -57,6 +57,16 @@ export interface BlogPost {
   content: string;
 }
 
+export interface BoardMember {
+  role: "Chairman" | "Director" | "Principal";
+  name: string;
+  designation: string;
+  credentials: string;
+  description: string;
+  image: string;
+  imagePosition: string;
+}
+
 export interface Value {
   title: string;
   description: string;

@@ -4,6 +4,7 @@
   Event,
   PastEvent,
   BlogPost,
+  BoardMember,
   Value,
   JourneyStep,
   Stat,
@@ -34,6 +35,7 @@ export interface SiteData {
   startups: Startup[];
   events: { upcoming: Event[]; past: PastEvent[] };
   blogPosts: BlogPost[];
+  boardMembers: BoardMember[];
   values: Value[];
 }
 
@@ -407,6 +409,41 @@ export const siteData: SiteData = {
       category: "Events",
       content:
         "From 10 to 12 August 2026, BLIEVE hosted its first open poster design challenge at ACET, Bengaluru. Students from all branches were invited to create an original poster that captured the spirit of entrepreneurship \u2014 belief, creation, and inspiration. The challenge ran for three days, giving participants time to ideate, design, and submit their best work.\n\nThe format was simple on purpose. A \u20b969 entry fee kept the field honest, the brief was open enough that no two entries looked alike, and every submission had to answer one question: what does entrepreneurship mean on this campus?\n\nWinners were announced on 13 August 2026, with a \u20b91,000 first prize and a \u20b9500 second prize. More important than the prizes was what the challenge proved \u2014 that when you give students a concrete brief and a real deadline, they show up. Entries came from branches that had never participated in a BLIEVE activity before.\n\nDesign was a deliberate choice for our first challenge. Before we ask students to pitch ventures or write business plans, we wanted to start with something anyone could enter \u2014 no coding, no capital, no co-founders required. Belief, it turns out, looks good on a poster.\n\nThe next challenge is in the works, with bigger prizes and bigger ideas. Follow @blieve_ecell to hear about it first.",
+    },
+  ],
+
+  boardMembers: [
+    {
+      role: "Chairman",
+      name: "Dr. B. A. Vishwanath",
+      designation: "Founder Chairman, Aditya Group of Institutions",
+      credentials:
+        "Former Senate Member, Rajiv Gandhi University of Health Sciences, Karnataka",
+      description:
+        "Founded the Aditya Group of Institutions and continues to guide its long-term vision for education, innovation and service to society.",
+      image: "/board/chairman.png",
+      imagePosition: "object-top",
+    },
+    {
+      role: "Director",
+      name: "Dr. (Ar.) K. N. Ganesh Babu",
+      designation: "Director, Aditya Group of Institutions",
+      credentials: "M.Arch (Landscape) \u00b7 Member, ACET Governing Council",
+      description:
+        "Director of the Aditya Group of Institutions and a member of ACET\u2019s Governing Council, where he represents the group\u2019s management.",
+      image: "/board/director.jpg",
+      imagePosition: "object-top",
+    },
+    {
+      role: "Principal",
+      name: "Dr. M. S. Ganesha Prasad",
+      designation:
+        "Principal, Aditya College of Engineering and Technology, Bengaluru",
+      credentials: "M.Tech, Ph.D., MISTE, FIE, FIIPE, MIEEE (Sr. Grade)",
+      description:
+        "Chairs ACET\u2019s Entrepreneurship Development Cell and brings over three decades of experience in higher education, research supervision and institutional development.",
+      image: "/board/principal.png",
+      imagePosition: "object-center",
     },
   ],
 

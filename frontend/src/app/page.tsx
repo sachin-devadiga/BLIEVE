@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, BookOpen, Zap, Rocket, Handshake, Sparkles } from "lucide-react";
 import { siteData } from "@/data/siteData";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -534,7 +535,87 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ Section 11: Join BLIEVE ============ */}
+      {/* ============ Section 11: E-Cell Board ============ */}
+      <section id="board" className="py-20 bg-navy dark:bg-[#080F24] relative overflow-hidden scroll-mt-24">
+        <div
+          className="absolute inset-0 pointer-events-none opacity-20"
+          aria-hidden="true"
+        >
+          <div className="absolute -top-16 left-1/4 w-72 h-72 bg-orange rounded-full blur-[140px]" />
+          <div className="absolute bottom-0 right-0 w-80 h-80 bg-gold rounded-full blur-[160px]" />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <AnimatedSection>
+            <div className="max-w-3xl mb-12">
+              <p className="text-orange font-medium text-sm mb-2 tracking-wider uppercase">
+                Leadership
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white">
+                E-Cell Board
+              </h2>
+              <p className="text-white/60 leading-relaxed mt-4">
+                BLIEVE operates under the guidance of the leadership of Aditya
+                College of Engineering and Technology and the Aditya Group of
+                Institutions.
+              </p>
+            </div>
+          </AnimatedSection>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-8">
+            {siteData.boardMembers.map((member, i) => (
+              <AnimatedSection key={member.role} delay={i * 0.1} className="h-full">
+                <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition-colors hover:border-orange/40">
+                  <div className="relative h-56 sm:h-60 lg:h-64 overflow-hidden">
+                    <Image
+                      src={member.image}
+                      alt={`Portrait of ${member.name}`}
+                      fill
+                      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw"
+                      className={`object-cover ${member.imagePosition} transition-transform duration-500 group-hover:scale-[1.03]`}
+                    />
+                    <div
+                      className="absolute inset-0 bg-gradient-to-t from-navy via-navy/20 to-transparent"
+                      aria-hidden="true"
+                    />
+                    <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-orange px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-white">
+                      {member.role}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <h3 className="font-serif text-xl font-bold text-white">
+                      {member.name}
+                    </h3>
+                    <p className="text-orange text-sm font-medium mt-1.5">
+                      {member.designation}
+                    </p>
+                    <p className="text-white/50 text-xs mt-1.5">
+                      {member.credentials}
+                    </p>
+                    <p className="text-white/60 text-sm leading-relaxed mt-4 pt-4 border-t border-white/10">
+                      {member.description}
+                    </p>
+                  </div>
+                </article>
+              </AnimatedSection>
+            ))}
+          </div>
+          <AnimatedSection delay={0.3}>
+            <p className="text-white/40 text-xs mt-8">
+              Profiles sourced from the official{" "}
+              <a
+                href="https://www.acetedu.net/faculty/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange/80 underline underline-offset-2 hover:text-orange"
+              >
+                ACET faculty page
+              </a>
+              .
+            </p>
+          </AnimatedSection>
+        </div>
+      </section>
+
+      {/* ============ Section 12: Join BLIEVE ============ */}
       <section className="py-20 bg-pale dark:bg-[#1A1A2E]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <AnimatedSection>
@@ -573,7 +654,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ============ Section 12: Startup Membership ============ */}
+      {/* ============ Section 13: Startup Membership ============ */}
       <section className="py-20 bg-navy dark:bg-[#080F24] relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute -top-10 right-10 w-64 h-64 bg-orange rounded-full blur-[120px]" />
