@@ -3,12 +3,15 @@ import { createMember, verifyMemberLogin } from "../lib/users.js";
 import {
   MEMBER_SESSION_COOKIE,
   MEMBER_TTL_SECONDS,
+  ADMIN_TTL_SECONDS,
   clearCookieOptions,
   cookieOptions,
   createMemberToken,
+  createAdminToken,
   readMemberPayload,
   verifyAdminToken,
   isMemberSessionConfigured,
+  isAdminConfigured,
   ADMIN_SESSION_COOKIE,
 } from "../lib/sessions.js";
 import { listApplicationsByEmail } from "../lib/applications.js";
@@ -20,6 +23,23 @@ const router = Router();
 
 function fail(res, status, error) {
   return res.status(status).json({ error });
+}
+
+function isAdminEmail(email) {
+  return (
+    Boolean(config.adminEmail) &&
+    String(email || "").trim().toLowerCase() === config.adminEmail.toLowerCase()
+  );
+}
+
+function adminSessionPayload() {
+  return {
+    email: config.adminEmail,
+    name: config.adminName,
+    role: "admin",
+    title: "Administrator",
+    loginTime: Date.now(),
+  };
 }
 
 router.post("/auth/register", async (req, res) => {
@@ -38,6 +58,14 @@ router.post("/auth/register", async (req, res) => {
   const email = typeof body.email === "string" ? body.email : "";
   const password = typeof body.password === "string" ? body.password : "";
 
+  if (isAdminEmail(email)) {
+    return fail(
+      res,
+      403,
+      "This email is reserved for the administrator. Please sign in instead."
+    );
+  }
+
   try {
     const result = await createMember({ name, email, password });
     if (!result.ok) return fail(res, 400, result.error);
@@ -49,7 +77,7 @@ router.post("/auth/register", async (req, res) => {
         cookieOptions(req, MEMBER_TTL_SECONDS)
       )
       .status(201)
-      .json({ user: result.member });
+      .json({ user: { ...result.member, role: "member" } });
   } catch (error) {
     console.error("[auth/register] database unavailable", error);
     fail(res, 503, "Signup is unavailable right now. Please try again shortly.");
@@ -75,13 +103,26 @@ router.post("/auth/login", async (req, res) => {
     const result = await verifyMemberLogin({ email, password });
     if (!result.ok) return fail(res, 401, result.error);
 
-    res
-      .cookie(
-        MEMBER_SESSION_COOKIE,
-        createMemberToken(result.member),
-        cookieOptions(req, MEMBER_TTL_SECONDS)
-      )
-      .json({ user: result.member });
+    const adminAccount = isAdminEmail(result.member.email);
+    const user = adminAccount
+      ? { ...result.member, role: "admin", title: "Administrator" }
+      : { ...result.member, role: "member" };
+
+    res.cookie(
+      MEMBER_SESSION_COOKIE,
+      createMemberToken(result.member),
+      cookieOptions(req, MEMBER_TTL_SECONDS)
+    );
+
+    if (adminAccount && isAdminConfigured()) {
+      res.cookie(
+        ADMIN_SESSION_COOKIE,
+        createAdminToken(),
+        cookieOptions(req, ADMIN_TTL_SECONDS)
+      );
+    }
+
+    res.json({ user });
   } catch (error) {
     console.error("[auth/login] database unavailable", error);
     fail(res, 503, "Sign-in is unavailable right now. Please try again shortly.");
@@ -95,27 +136,20 @@ router.post("/auth/logout", (req, res) => {
 });
 
 router.get("/auth/session", (req, res) => {
+  if (verifyAdminToken(req.cookies?.[ADMIN_SESSION_COOKIE])) {
+    return res.json({ session: adminSessionPayload() });
+  }
+
   const member = readMemberPayload(req.cookies?.[MEMBER_SESSION_COOKIE]);
   if (member) {
+    const adminAccount = isAdminEmail(member.email);
     return res.json({
       session: {
         email: member.email,
         name: member.name,
-        role: "member",
-        title: member.title,
+        role: adminAccount ? "admin" : "member",
+        title: adminAccount ? "Administrator" : member.title,
         loginTime: member.issuedAt,
-      },
-    });
-  }
-
-  if (verifyAdminToken(req.cookies?.[ADMIN_SESSION_COOKIE])) {
-    return res.json({
-      session: {
-        email: config.adminEmail,
-        name: config.adminName,
-        role: "admin",
-        title: "Administrator",
-        loginTime: Date.now(),
       },
     });
   }

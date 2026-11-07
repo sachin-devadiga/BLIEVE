@@ -15,6 +15,7 @@ import {
 import {
   getSession,
   getServerSession,
+  refreshSession,
   subscribeSession,
 } from "@/lib/clientAuth";
 import { signOutEverywhere } from "@/lib/signOut";
@@ -183,6 +184,7 @@ export default function AdminClient() {
         return;
       }
       setPassword("");
+      await refreshSession();
       await loadList();
     } catch {
       setLoginError("Something went wrong. Please try again.");

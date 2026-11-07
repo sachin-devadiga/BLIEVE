@@ -22,6 +22,7 @@ type ApiUser = {
   email: string;
   name: string;
   title: string;
+  role?: "admin" | "member";
 };
 
 type SessionApi = {
@@ -138,7 +139,10 @@ export async function login(
         "Could not sign in. Please try again in a moment.",
     };
   }
-  const session = toSession(response.user);
+  const session = toSession(
+    response.user,
+    response.user.role ?? "member"
+  );
   setClientSession(session);
   return { success: true, user: session };
 }
@@ -161,7 +165,10 @@ export async function register(
         "Could not create the account. Please try again in a moment.",
     };
   }
-  const session = toSession(response.user);
+  const session = toSession(
+    response.user,
+    response.user.role ?? "member"
+  );
   setClientSession(session);
   return { success: true, user: session };
 }
