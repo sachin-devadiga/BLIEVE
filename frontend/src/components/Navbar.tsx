@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useSyncExternalStore } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+  type MouseEvent,
+} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -109,6 +115,28 @@ export default function Navbar() {
   }, []);
 
   const closeMenu = () => setIsOpen(false);
+
+  // Next.js updates the URL for same-page hash links but does not scroll.
+  // Handle those clicks ourselves so the "Board" menu item jumps to the
+  // E-Cell Board section when the visitor is already on the homepage.
+  // Mobile passes a delay so the menu's exit animation finishes first —
+  // collapsing it mid-scroll makes the browser cancel the smooth scroll.
+  const handleHashClick = (
+    e: MouseEvent<HTMLAnchorElement>,
+    path: string,
+    delay = 0
+  ) => {
+    if (pathname !== "/" || !path.startsWith("/#")) return;
+    const target = document.getElementById(path.slice(2));
+    if (!target) return;
+    e.preventDefault();
+    window.history.replaceState(null, "", path);
+    window.setTimeout(() => {
+      document
+        .getElementById(path.slice(2))
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, delay);
+  };
 
   const openNow = (label: string) => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -244,6 +272,7 @@ export default function Navbar() {
                 <Link
                   key={item.label}
                   href={item.path}
+                  onClick={(e) => handleHashClick(e, item.path)}
                   className={`${linkBase} ${
                     pathname === item.path ? linkActive : linkIdle
                   }`}
@@ -357,7 +386,12 @@ export default function Navbar() {
                 <Link
                   key={link.path}
                   href={link.path}
-                  onClick={closeMenu}
+                  onClick={(e) => {
+                    // Wait for the mobile menu (300ms exit) to finish
+                    // collapsing before starting the smooth scroll.
+                    handleHashClick(e, link.path, 380);
+                    closeMenu();
+                  }}
                   className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                     pathname === link.path
                       ? "text-orange bg-orange/10"
